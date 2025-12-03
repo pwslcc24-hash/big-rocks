@@ -6,8 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar as CalendarIcon, Clock, X, Repeat, RefreshCw } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
+import { Calendar as CalendarIcon, Clock, X, Repeat } from "lucide-react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 
@@ -19,8 +18,7 @@ export default function TaskForm({ task, onSubmit, onCancel, isLoading }) {
     deadline: null,
     notes: "",
     completed: false,
-    recurrence: "none",
-    sync_to_calendar: false
+    recurrence: "none"
   });
   const [time, setTime] = useState({ hour: "12", minute: "00", period: "PM" });
 
@@ -33,8 +31,7 @@ export default function TaskForm({ task, onSubmit, onCancel, isLoading }) {
         deadline: task.deadline ? new Date(task.deadline) : null,
         notes: task.notes || "",
         completed: task.completed || false,
-        recurrence: task.recurrence || "none",
-        sync_to_calendar: task.sync_to_calendar || false
+        recurrence: task.recurrence || "none"
       });
       if (task.deadline) {
         const d = new Date(task.deadline);
@@ -224,24 +221,8 @@ export default function TaskForm({ task, onSubmit, onCancel, isLoading }) {
         </div>
       </div>
 
-      {formData.deadline && (
-                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
-                  <div className="flex items-center gap-3">
-                    <RefreshCw className="w-5 h-5 text-slate-500" />
-                    <div>
-                      <Label className="text-sm font-medium text-slate-700">Sync to Google Calendar</Label>
-                      <p className="text-xs text-slate-500">Add this task to your calendar</p>
-                    </div>
-                  </div>
-                  <Switch
-                    checked={formData.sync_to_calendar}
-                    onCheckedChange={(checked) => setFormData({ ...formData, sync_to_calendar: checked })}
-                  />
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <Label htmlFor="notes" className="text-sm font-medium text-slate-700">Notes (Optional)</Label>
+      <div className="space-y-2">
+        <Label htmlFor="notes" className="text-sm font-medium text-slate-700">Notes (Optional)</Label>
         <Textarea
           id="notes"
           placeholder="Add any additional details..."

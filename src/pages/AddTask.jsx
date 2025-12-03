@@ -14,18 +14,7 @@ export default function AddTask() {
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
-    mutationFn: async (data) => {
-      const task = await base44.entities.Task.create(data);
-      // Sync to calendar if enabled
-      if (data.sync_to_calendar && data.deadline) {
-        try {
-          await base44.functions.syncTaskAfterSave({ taskId: task.id, action: 'create' });
-        } catch (e) {
-          console.log('Calendar sync skipped:', e.message);
-        }
-      }
-      return task;
-    },
+    mutationFn: (data) => base44.entities.Task.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
       navigate(createPageUrl("Home"));
