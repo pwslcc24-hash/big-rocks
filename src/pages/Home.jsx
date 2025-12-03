@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
-import { Plus, ListTodo, CheckCircle2, Clock } from "lucide-react";
+import { Plus, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { AnimatePresence, motion } from "framer-motion";
@@ -73,37 +73,7 @@ export default function Home() {
           </Link>
         </motion.div>
 
-        {/* Stats */}
-        {tasks.length > 0 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="grid grid-cols-3 gap-3 sm:gap-4 mb-8"
-          >
-            <div className="bg-white rounded-2xl p-4 border border-slate-100">
-              <div className="flex items-center gap-2 text-slate-500 mb-1">
-                <ListTodo className="w-4 h-4" />
-                <span className="text-xs font-medium">Total</span>
-              </div>
-              <p className="text-2xl font-bold text-slate-800">{tasks.length}</p>
-            </div>
-            <div className="bg-white rounded-2xl p-4 border border-slate-100">
-              <div className="flex items-center gap-2 text-amber-500 mb-1">
-                <Clock className="w-4 h-4" />
-                <span className="text-xs font-medium">Pending</span>
-              </div>
-              <p className="text-2xl font-bold text-slate-800">{incompleteTasks.length}</p>
-            </div>
-            <div className="bg-white rounded-2xl p-4 border border-slate-100">
-              <div className="flex items-center gap-2 text-emerald-500 mb-1">
-                <CheckCircle2 className="w-4 h-4" />
-                <span className="text-xs font-medium">Done</span>
-              </div>
-              <p className="text-2xl font-bold text-slate-800">{completedTasks.length}</p>
-            </div>
-          </motion.div>
-        )}
+
 
         {/* Task List */}
         {isLoading ? (
@@ -123,16 +93,45 @@ export default function Home() {
         ) : tasks.length === 0 ? (
           <EmptyState />
         ) : (
-          <div className="space-y-3">
-            <AnimatePresence mode="popLayout">
-              {sortedTasks.map((task) => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  onToggleComplete={handleToggleComplete}
-                />
-              ))}
-            </AnimatePresence>
+          <div className="space-y-6">
+            {/* Current Tasks */}
+            {incompleteTasks.length > 0 && (
+              <div>
+                <h2 className="text-lg font-semibold text-slate-700 mb-3">Current Tasks</h2>
+                <div className="space-y-3">
+                  <AnimatePresence mode="popLayout">
+                    {incompleteTasks.map((task) => (
+                      <TaskItem
+                        key={task.id}
+                        task={task}
+                        onToggleComplete={handleToggleComplete}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </div>
+            )}
+
+            {/* Completed Tasks */}
+            {completedTasks.length > 0 && (
+              <div>
+                <h2 className="text-lg font-semibold text-slate-700 mb-3 flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-[#0047BA]" />
+                  Completed Tasks
+                </h2>
+                <div className="space-y-3">
+                  <AnimatePresence mode="popLayout">
+                    {completedTasks.map((task) => (
+                      <TaskItem
+                        key={task.id}
+                        task={task}
+                        onToggleComplete={handleToggleComplete}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
