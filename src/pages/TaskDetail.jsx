@@ -20,6 +20,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import SubtaskList from "@/components/tasks/SubtaskList";
 
 const urgencyColors = {
   1: "bg-slate-100 text-slate-600 border-slate-200",
@@ -206,6 +207,9 @@ export default function TaskDetail() {
                   </div>
                 </div>
               )}
+
+              {/* Subtasks */}
+              <SubtaskList taskId={taskId} />
 
               {/* Notes */}
               {task.notes && (
