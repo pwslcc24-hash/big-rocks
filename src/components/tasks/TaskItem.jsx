@@ -1,7 +1,9 @@
 import React from 'react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, ChevronRight, Repeat } from "lucide-react";
+import { Calendar, ChevronRight, Repeat, ListChecks } from "lucide-react";
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -24,6 +26,13 @@ const importanceColors = {
 };
 
 export default function TaskItem({ task, onToggleComplete }) {
+  const { data: subtasks = [] } = useQuery({
+    queryKey: ['subtasks', task.id],
+    queryFn: () => base44.entities.Subtask.filter({ task_id: task.id })
+  });
+
+  const completedSubtasks = subtasks.filter(s => s.completed).length;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -74,6 +83,13 @@ export default function TaskItem({ task, onToggleComplete }) {
                     <span className="flex items-center gap-1 text-xs text-purple-600">
                       <Repeat className="w-3 h-3" />
                       {task.recurrence}
+                    </span>
+                  )}
+
+                  {subtasks.length > 0 && (
+                    <span className="flex items-center gap-1 text-xs text-slate-500">
+                      <ListChecks className="w-3 h-3" />
+                      {completedSubtasks}/{subtasks.length}
                     </span>
                   )}
               </div>
