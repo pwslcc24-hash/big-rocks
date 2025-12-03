@@ -26,7 +26,17 @@ export default function EditTask() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data) => base44.entities.Task.update(taskId, data),
+    mutationFn: async (data) => {
+      await base44.entities.Task.update(taskId, data);
+      // Sync to calendar if enabled
+      if (data.sync_to_calendar && data.deadline) {
+        try {
+          await base44.functions.syncTaskAfterSave({ taskId, action: 'update' });
+        } catch (e) {
+          console.log('Calendar sync skipped:', e.message);
+        }
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
       queryClient.invalidateQueries({ queryKey: ['task', taskId] });
