@@ -2,7 +2,7 @@ import React, { useMemo, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
-import { Plus, CheckCircle2, ChevronRight, Repeat } from "lucide-react";
+import { Plus, CheckCircle2, ChevronRight, Repeat, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { AnimatePresence, motion } from "framer-motion";
@@ -144,12 +144,17 @@ export default function Home() {
             </Button>
             </Link>
             {completedTasks.length > 0 && (
-              <Link to={createPageUrl("CompletedTasks")} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0047BA] transition-colors">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Completed</span>
-                <ChevronRight className="w-3 h-3" />
-              </Link>
-            )}
+                                <Link to={createPageUrl("CompletedTasks")} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0047BA] transition-colors">
+                                  <CheckCircle2 className="w-3.5 h-3.5" />
+                                  <span>Completed</span>
+                                  <ChevronRight className="w-3 h-3" />
+                                </Link>
+                              )}
+                              <Link to={createPageUrl("CalendarSettings")} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0047BA] transition-colors">
+                                <Calendar className="w-3.5 h-3.5" />
+                                <span>Calendar</span>
+                                <ChevronRight className="w-3 h-3" />
+                              </Link>
             </div>
             </motion.div>
 
