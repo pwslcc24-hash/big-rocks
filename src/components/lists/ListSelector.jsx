@@ -26,6 +26,16 @@ export default function ListSelector({ currentList, onListChange, userEmail }) {
   const [newListName, setNewListName] = useState("");
   const queryClient = useQueryClient();
 
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
+  const setDefaultMutation = useMutation({
+    mutationFn: (listId) => base44.auth.updateMe({ default_list_id: listId }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['currentUser'] })
+  });
+
   const { data: lists = [] } = useQuery({
     queryKey: ['taskLists', userEmail],
     queryFn: async () => {
@@ -110,6 +120,16 @@ export default function ListSelector({ currentList, onListChange, userEmail }) {
               <Plus className="w-4 h-4 mr-2" />
               Create New List
             </DropdownMenuItem>
+            {currentList && (
+              <DropdownMenuItem 
+                onClick={() => setDefaultMutation.mutate(currentList.id)}
+                className="cursor-pointer"
+                disabled={user?.default_list_id === currentList.id}
+              >
+                <Star className={`w-4 h-4 mr-2 ${user?.default_list_id === currentList.id ? 'fill-yellow-400 text-yellow-400' : ''}`} />
+                {user?.default_list_id === currentList.id ? 'Default List' : 'Set as Default'}
+              </DropdownMenuItem>
+            )}
             {currentList && currentList.owner_email === userEmail && (
               <DropdownMenuItem asChild className="cursor-pointer">
                 <Link to={createPageUrl(`ManageList?id=${currentList.id}`)}>
