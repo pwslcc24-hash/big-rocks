@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { ChevronDown, Plus, Users, Settings } from "lucide-react";
+import { ChevronDown, Plus, Users, User, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
@@ -59,7 +59,7 @@ export default function ListSelector({ currentList, onListChange, userEmail }) {
     });
   };
 
-  const myLists = lists.filter(l => l.owner_email === userEmail && !l.is_personal);
+  const myLists = lists.filter(l => l.owner_email === userEmail);
   const sharedWithMe = lists.filter(l => l.owner_email !== userEmail);
 
   return (
@@ -68,7 +68,11 @@ export default function ListSelector({ currentList, onListChange, userEmail }) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="h-9 px-3 rounded-xl border-slate-200">
-              <Users className="w-4 h-4 mr-2 text-[#0047BA]" />
+              {currentList?.is_personal ? (
+                <User className="w-4 h-4 mr-2 text-slate-500" />
+              ) : (
+                <Users className="w-4 h-4 mr-2 text-[#0047BA]" />
+              )}
               <span className="max-w-[120px] truncate">{currentList?.name || "Select List"}</span>
               <ChevronDown className="w-4 h-4 ml-2 text-slate-400" />
             </Button>
@@ -83,7 +87,11 @@ export default function ListSelector({ currentList, onListChange, userEmail }) {
                     onClick={() => onListChange(list)}
                     className="cursor-pointer"
                   >
-                    <Users className="w-4 h-4 mr-2 text-[#0047BA]" />
+                    {list.is_personal ? (
+                      <User className="w-4 h-4 mr-2 text-slate-400" />
+                    ) : (
+                      <Users className="w-4 h-4 mr-2 text-[#0047BA]" />
+                    )}
                     {list.name}
                   </DropdownMenuItem>
                 ))}
@@ -110,7 +118,7 @@ export default function ListSelector({ currentList, onListChange, userEmail }) {
               <Plus className="w-4 h-4 mr-2" />
               Create New List
             </DropdownMenuItem>
-            {currentList && currentList.owner_email === userEmail && (
+            {currentList && !currentList.is_personal && currentList.owner_email === userEmail && (
               <DropdownMenuItem asChild className="cursor-pointer">
                 <Link to={createPageUrl(`ManageList?id=${currentList.id}`)}>
                   <Settings className="w-4 h-4 mr-2" />

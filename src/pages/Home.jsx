@@ -33,21 +33,24 @@ export default function Home() {
     enabled: !!user?.email
   });
 
-  // Create default "My Tasks" list if user has no lists
+  // Create personal list if it doesn't exist
   useEffect(() => {
     if (!user?.email || lists === undefined) return;
     
-    if (lists.length === 0) {
+    const personalList = lists.find(l => l.is_personal && l.owner_email === user.email);
+    if (!personalList && lists.length === 0) {
       base44.entities.TaskList.create({
         name: "My Tasks",
         owner_email: user.email,
         shared_with: [],
-        is_personal: false
+        is_personal: true
       }).then(() => {
         queryClient.invalidateQueries({ queryKey: ['taskLists'] });
       });
     } else if (!currentList && lists.length > 0) {
-      setCurrentList(lists[0]);
+      // Default to personal list or first available
+      const defaultList = lists.find(l => l.is_personal && l.owner_email === user.email) || lists[0];
+      setCurrentList(defaultList);
     }
   }, [user?.email, lists, currentList, queryClient]);
 
