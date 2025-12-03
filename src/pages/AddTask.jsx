@@ -12,6 +12,8 @@ import { motion } from "framer-motion";
 export default function AddTask() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const urlParams = new URLSearchParams(window.location.search);
+  const listId = urlParams.get('list');
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Task.create(data),
@@ -22,7 +24,7 @@ export default function AddTask() {
   });
 
   const handleSubmit = (data) => {
-    createMutation.mutate(data);
+    createMutation.mutate({ ...data, list_id: listId });
   };
 
   return (
