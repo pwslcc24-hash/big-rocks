@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
-import { Plus, CheckCircle2 } from "lucide-react";
+import { Plus, CheckCircle2, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { AnimatePresence, motion } from "framer-motion";
@@ -45,9 +45,39 @@ export default function Home() {
   const handleToggleComplete = (task) => {
     updateMutation.mutate({
       id: task.id,
-      data: { completed: !task.completed }
+      data: { 
+        completed: !task.completed,
+        completed_at: !task.completed ? new Date().toISOString() : null
+      }
     });
   };
+
+  // Move tasks to completed after 5 minutes
+  useEffect(() => {
+    const recentlyCompleted = tasks.filter(t => 
+      t.completed && t.completed_at && 
+      (new Date() - new Date(t.completed_at)) < 5 * 60 * 1000
+    );
+
+    if (recentlyCompleted.length > 0) {
+      const timeouts = recentlyCompleted.map(task => {
+        const timeLeft = 5 * 60 * 1000 - (new Date() - new Date(task.completed_at));
+        return setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: ['tasks'] });
+        }, Math.max(timeLeft, 0));
+      });
+
+      return () => timeouts.forEach(t => clearTimeout(t));
+    }
+  }, [tasks, queryClient]);
+
+  // Tasks that are recently completed (within 5 minutes) stay visible
+  const recentlyCompletedTasks = completedTasks.filter(t => 
+    t.completed_at && (new Date() - new Date(t.completed_at)) < 5 * 60 * 1000
+  );
+
+  // Count of tasks moved to completed page
+  const archivedCompletedCount = completedTasks.length - recentlyCompletedTasks.length;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
@@ -94,8 +124,22 @@ export default function Home() {
           <EmptyState />
         ) : (
           <div className="space-y-6">
+            {/* Completed Tasks Link */}
+            {completedTasks.length > 0 && (
+              <Link to={createPageUrl("CompletedTasks")}>
+                <div className="bg-white rounded-2xl border border-slate-100 p-4 hover:shadow-lg hover:border-slate-200 transition-all duration-300 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-[#0047BA]" />
+                    <span className="font-semibold text-slate-700">Completed Tasks</span>
+                    <span className="text-sm text-slate-500">({completedTasks.length})</span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-slate-400" />
+                </div>
+              </Link>
+            )}
+
             {/* Current Tasks */}
-            {incompleteTasks.length > 0 && (
+            {(incompleteTasks.length > 0 || recentlyCompletedTasks.length > 0) && (
               <div>
                 <h2 className="text-lg font-semibold text-slate-700 mb-3">Current Tasks</h2>
                 <div className="space-y-3">
@@ -107,21 +151,7 @@ export default function Home() {
                         onToggleComplete={handleToggleComplete}
                       />
                     ))}
-                  </AnimatePresence>
-                </div>
-              </div>
-            )}
-
-            {/* Completed Tasks */}
-            {completedTasks.length > 0 && (
-              <div>
-                <h2 className="text-lg font-semibold text-slate-700 mb-3 flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-[#0047BA]" />
-                  Completed Tasks
-                </h2>
-                <div className="space-y-3">
-                  <AnimatePresence mode="popLayout">
-                    {completedTasks.map((task) => (
+                    {recentlyCompletedTasks.map((task) => (
                       <TaskItem
                         key={task.id}
                         task={task}
