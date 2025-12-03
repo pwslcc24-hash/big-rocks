@@ -2,7 +2,7 @@ import React, { useMemo, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
-import { Plus, CheckCircle2, ChevronRight, Repeat, ChevronUp, ChevronDown } from "lucide-react";
+import { Plus, CheckCircle2, ChevronRight, Repeat } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { AnimatePresence, motion } from "framer-motion";
@@ -62,33 +62,21 @@ export default function Home() {
     });
   };
 
-  // Sort by manual order
+  // Sort algorithm: Urgency first (descending), then Importance (descending)
   const sortedTasks = useMemo(() => {
     return [...tasks].sort((a, b) => {
       // First, separate completed from incomplete
       if (a.completed !== b.completed) {
         return a.completed ? 1 : -1;
       }
-      // Then sort by manual order
-      return (a.order || 0) - (b.order || 0);
+      // Then sort by urgency (higher first)
+      if (b.urgency !== a.urgency) {
+        return b.urgency - a.urgency;
+      }
+      // Then by importance (higher first)
+      return b.importance - a.importance;
     });
   }, [tasks]);
-
-  const handleMoveTask = (task, direction) => {
-    const taskList = incompleteTasks;
-    const currentIndex = taskList.findIndex(t => t.id === task.id);
-    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    
-    if (newIndex < 0 || newIndex >= taskList.length) return;
-    
-    const otherTask = taskList[newIndex];
-    const currentOrder = task.order || 0;
-    const otherOrder = otherTask.order || 0;
-    
-    // Swap orders
-    updateMutation.mutate({ id: task.id, data: { order: otherOrder } });
-    updateMutation.mutate({ id: otherTask.id, data: { order: currentOrder } });
-  };
 
   const incompleteTasks = sortedTasks.filter(t => !t.completed);
   const completedTasks = sortedTasks.filter(t => t.completed);
@@ -192,15 +180,11 @@ export default function Home() {
                 <h2 className="text-lg font-semibold text-slate-700 mb-3">Current Tasks</h2>
                 <div className="space-y-3">
                   <AnimatePresence mode="popLayout">
-                    {incompleteTasks.map((task, index) => (
+                    {incompleteTasks.map((task) => (
                       <TaskItem
                         key={task.id}
                         task={task}
                         onToggleComplete={handleToggleComplete}
-                        onMoveUp={() => handleMoveTask(task, 'up')}
-                        onMoveDown={() => handleMoveTask(task, 'down')}
-                        canMoveUp={index > 0}
-                        canMoveDown={index < incompleteTasks.length - 1}
                       />
                     ))}
                     {recentlyCompletedTasks.map((task) => (
