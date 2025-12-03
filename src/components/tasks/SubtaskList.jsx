@@ -140,44 +140,43 @@ export default function SubtaskList({ taskId }) {
         </Droppable>
       </DragDropContext>
 
-        {isAdding && (
-          <motion.form
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            onSubmit={handleAddSubtask}
-            className="flex items-center gap-2"
+      {isAdding && (
+        <motion.form
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          onSubmit={handleAddSubtask}
+          className="flex items-center gap-2 mt-2"
+        >
+          <Input
+            value={newSubtask}
+            onChange={(e) => setNewSubtask(e.target.value)}
+            placeholder="Subtask title..."
+            className="h-9 text-sm rounded-lg border-slate-200"
+            autoFocus
+          />
+          <Button
+            type="submit"
+            size="sm"
+            disabled={!newSubtask.trim() || createMutation.isPending}
+            className="h-9 px-3 rounded-lg bg-[#0047BA] hover:bg-[#003A99]"
           >
-            <Input
-              value={newSubtask}
-              onChange={(e) => setNewSubtask(e.target.value)}
-              placeholder="Subtask title..."
-              className="h-9 text-sm rounded-lg border-slate-200"
-              autoFocus
-            />
-            <Button
-              type="submit"
-              size="sm"
-              disabled={!newSubtask.trim() || createMutation.isPending}
-              className="h-9 px-3 rounded-lg bg-[#0047BA] hover:bg-[#003A99]"
-            >
-              Add
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={() => { setIsAdding(false); setNewSubtask(""); }}
-              className="h-9 w-9"
-            >
-              <X className="w-4 h-4" />
-            </Button>
-          </motion.form>
-        )}
+            Add
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => { setIsAdding(false); setNewSubtask(""); }}
+            className="h-9 w-9"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </motion.form>
+      )}
 
-        {subtasks.length === 0 && !isAdding && (
-          <p className="text-sm text-slate-400 text-center py-2">No subtasks yet</p>
-        )}
-      </div>
+      {subtasks.length === 0 && !isAdding && (
+        <p className="text-sm text-slate-400 text-center py-2">No subtasks yet</p>
+      )}
     </div>
   );
 }
