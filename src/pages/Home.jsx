@@ -225,26 +225,35 @@ export default function Home() {
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between mb-8"
+          className="mb-8"
         >
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#0047BA]">Big Rocks</h1>
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#0047BA]">Big Rocks</h1>
             <div className="flex flex-col items-end gap-2">
-            <Link to={createPageUrl("AddTask")}>
-            <Button className="h-11 px-5 rounded-xl bg-[#0047BA] hover:bg-[#003A99] shadow-lg shadow-blue-900/25">
-              <Plus className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Add Task</span>
-              <span className="sm:hidden">Add</span>
-            </Button>
-            </Link>
-            {completedTasks.length > 0 && (
-              <Link to={createPageUrl("CompletedTasks")} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0047BA] transition-colors">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Completed</span>
-                <ChevronRight className="w-3 h-3" />
+              <Link to={createPageUrl(`AddTask?list=${currentList?.id}`)}>
+                <Button className="h-11 px-5 rounded-xl bg-[#0047BA] hover:bg-[#003A99] shadow-lg shadow-blue-900/25">
+                  <Plus className="w-4 h-4 mr-2" />
+                  <span className="hidden sm:inline">Add Task</span>
+                  <span className="sm:hidden">Add</span>
+                </Button>
               </Link>
-            )}
+              {completedTasks.length > 0 && (
+                <Link to={createPageUrl(`CompletedTasks?list=${currentList?.id}`)} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0047BA] transition-colors">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Completed</span>
+                  <ChevronRight className="w-3 h-3" />
+                </Link>
+              )}
             </div>
-            </motion.div>
+          </div>
+          {user?.email && (
+            <ListSelector 
+              currentList={currentList} 
+              onListChange={setCurrentList} 
+              userEmail={user.email} 
+            />
+          )}
+        </motion.div>
 
 
 
