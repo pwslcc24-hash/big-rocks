@@ -62,16 +62,37 @@ export default function Home() {
     });
   };
 
-  // Sort algorithm: Urgency first (descending), then Importance (descending)
+  // Calculate effective urgency based on deadline proximity
+  const getEffectiveUrgency = (task) => {
+    if (!task.deadline || task.completed) return task.urgency;
+    
+    const now = new Date();
+    const deadline = new Date(task.deadline);
+    const daysUntilDeadline = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
+    
+    // Escalate urgency as deadline approaches (for important tasks)
+    if (task.importance >= 3) {
+      if (daysUntilDeadline <= 0) return 5; // Overdue = critical
+      if (daysUntilDeadline <= 1) return Math.max(task.urgency, 5);
+      if (daysUntilDeadline <= 3) return Math.max(task.urgency, 4);
+      if (daysUntilDeadline <= 7) return Math.max(task.urgency, 3);
+    }
+    
+    return task.urgency;
+  };
+
+  // Sort algorithm: Effective Urgency first (descending), then Importance (descending)
   const sortedTasks = useMemo(() => {
     return [...tasks].sort((a, b) => {
       // First, separate completed from incomplete
       if (a.completed !== b.completed) {
         return a.completed ? 1 : -1;
       }
-      // Then sort by urgency (higher first)
-      if (b.urgency !== a.urgency) {
-        return b.urgency - a.urgency;
+      // Then sort by effective urgency (higher first)
+      const aUrgency = getEffectiveUrgency(a);
+      const bUrgency = getEffectiveUrgency(b);
+      if (bUrgency !== aUrgency) {
+        return bUrgency - aUrgency;
       }
       // Then by importance (higher first)
       return b.importance - a.importance;
