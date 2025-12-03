@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
@@ -8,14 +8,56 @@ import { createPageUrl } from "@/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import TaskItem from "@/components/tasks/TaskItem";
 import EmptyState from "@/components/tasks/EmptyState";
+import ListSelector from "@/components/lists/ListSelector";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
   const queryClient = useQueryClient();
+  const [currentList, setCurrentList] = useState(null);
+
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
+  // Ensure personal list exists for user
+  const { data: lists = [] } = useQuery({
+    queryKey: ['taskLists', user?.email],
+    queryFn: async () => {
+      const allLists = await base44.entities.TaskList.list();
+      return allLists.filter(list => 
+        list.owner_email === user.email || 
+        (list.shared_with && list.shared_with.includes(user.email))
+      );
+    },
+    enabled: !!user?.email
+  });
+
+  // Create personal list if it doesn't exist
+  useEffect(() => {
+    if (!user?.email || lists === undefined) return;
+    
+    const personalList = lists.find(l => l.is_personal && l.owner_email === user.email);
+    if (!personalList && lists.length === 0) {
+      base44.entities.TaskList.create({
+        name: "My Tasks",
+        owner_email: user.email,
+        shared_with: [],
+        is_personal: true
+      }).then(() => {
+        queryClient.invalidateQueries({ queryKey: ['taskLists'] });
+      });
+    } else if (!currentList && lists.length > 0) {
+      // Default to personal list or first available
+      const defaultList = lists.find(l => l.is_personal && l.owner_email === user.email) || lists[0];
+      setCurrentList(defaultList);
+    }
+  }, [user?.email, lists, currentList, queryClient]);
 
   const { data: tasks = [], isLoading } = useQuery({
-    queryKey: ['tasks'],
-    queryFn: () => base44.entities.Task.list()
+    queryKey: ['tasks', currentList?.id],
+    queryFn: () => base44.entities.Task.filter({ list_id: currentList.id }),
+    enabled: !!currentList?.id
   });
 
   // Auto-escalate urgency based on deadline proximity
