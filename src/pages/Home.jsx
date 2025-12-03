@@ -2,7 +2,7 @@ import React, { useMemo, useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
-import { Plus, CheckCircle2, ChevronRight, LogOut } from "lucide-react";
+import { Plus, CheckCircle2, ChevronRight, Repeat } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { AnimatePresence, motion } from "framer-motion";
@@ -229,18 +229,7 @@ export default function Home() {
           className="mb-8"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#0047BA]">Big Rocks</h1>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => base44.auth.logout()}
-                className="h-8 w-8 text-slate-400 hover:text-slate-600"
-                title="Logout"
-              >
-                <LogOut className="w-4 h-4" />
-              </Button>
-            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#0047BA]">Big Rocks</h1>
             <div className="flex flex-col items-end gap-2">
               <Link to={createPageUrl(`AddTask?list=${currentList?.id}`)}>
                 <Button className="h-11 px-5 rounded-xl bg-[#0047BA] hover:bg-[#003A99] shadow-lg shadow-blue-900/25">
