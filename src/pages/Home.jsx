@@ -47,7 +47,10 @@ export default function Home() {
         queryClient.invalidateQueries({ queryKey: ['taskLists'] });
       });
     } else if (!currentList && lists.length > 0) {
-      setCurrentList(lists[0]);
+      // Check for user's default list preference
+      const defaultListId = user.default_list_id;
+      const defaultList = defaultListId ? lists.find(l => l.id === defaultListId) : null;
+      setCurrentList(defaultList || lists[0]);
     }
   }, [user?.email, lists, currentList, queryClient]);
 

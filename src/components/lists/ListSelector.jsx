@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { ChevronDown, Plus, Users, Settings } from "lucide-react";
+import { ChevronDown, Plus, Users, Settings, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
