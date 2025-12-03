@@ -68,12 +68,16 @@ export default function Home() {
     
     const now = new Date();
     const deadline = new Date(task.deadline);
-    const daysUntilDeadline = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
+    
+    // Calculate days difference using date only (ignore time)
+    const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const deadlineDate = new Date(deadline.getFullYear(), deadline.getMonth(), deadline.getDate());
+    const daysUntilDeadline = Math.round((deadlineDate - nowDate) / (1000 * 60 * 60 * 24));
     
     // Escalate urgency as deadline approaches (for important tasks)
     if (task.importance >= 3) {
-      if (daysUntilDeadline <= 0) return 5; // Overdue = critical
-      if (daysUntilDeadline <= 1) return Math.max(task.urgency, 5);
+      if (daysUntilDeadline <= 0) return 5; // Overdue or due today = critical
+      if (daysUntilDeadline <= 1) return Math.max(task.urgency, 5); // Tomorrow
       if (daysUntilDeadline <= 3) return Math.max(task.urgency, 4);
       if (daysUntilDeadline <= 7) return Math.max(task.urgency, 3);
     }
