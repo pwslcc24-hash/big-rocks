@@ -126,7 +126,8 @@ export default function Home() {
       notes: task.notes,
       recurrence: task.recurrence,
       completed: false,
-      parent_task_id: task.parent_task_id || task.id
+      parent_task_id: task.parent_task_id || task.id,
+      list_id: task.list_id
     });
   };
 
