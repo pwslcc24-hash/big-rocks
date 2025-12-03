@@ -100,7 +100,7 @@ export default function Home() {
             {completedTasks.length > 0 && (
               <Link to={createPageUrl("CompletedTasks")} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0047BA] transition-colors">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>{completedTasks.length} completed</span>
+                <span>Completed</span>
                 <ChevronRight className="w-3 h-3" />
               </Link>
             )}
