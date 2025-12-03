@@ -11,10 +11,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CompletedTasks() {
   const queryClient = useQueryClient();
+  const urlParams = new URLSearchParams(window.location.search);
+  const listId = urlParams.get('list');
 
   const { data: tasks = [], isLoading } = useQuery({
-    queryKey: ['tasks'],
-    queryFn: () => base44.entities.Task.list()
+    queryKey: ['tasks', listId],
+    queryFn: () => listId ? base44.entities.Task.filter({ list_id: listId }) : base44.entities.Task.list(),
+    enabled: !!listId
   });
 
   const updateMutation = useMutation({
