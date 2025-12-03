@@ -18,6 +18,32 @@ export default function Home() {
     queryFn: () => base44.entities.Task.list()
   });
 
+  // Auto-escalate urgency based on deadline proximity
+  useEffect(() => {
+    if (!tasks.length) return;
+
+    tasks.forEach(task => {
+      if (!task.deadline || task.completed || task.importance < 3) return;
+
+      const now = new Date();
+      const deadline = new Date(task.deadline);
+      const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const deadlineDate = new Date(deadline.getFullYear(), deadline.getMonth(), deadline.getDate());
+      const daysUntilDeadline = Math.round((deadlineDate - nowDate) / (1000 * 60 * 60 * 24));
+
+      let newUrgency = task.urgency;
+      if (daysUntilDeadline <= 0) newUrgency = 5;
+      else if (daysUntilDeadline <= 1) newUrgency = Math.max(task.urgency, 5);
+      else if (daysUntilDeadline <= 3) newUrgency = Math.max(task.urgency, 4);
+      else if (daysUntilDeadline <= 7) newUrgency = Math.max(task.urgency, 3);
+
+      // Only update if urgency needs to increase
+      if (newUrgency > task.urgency) {
+        updateMutation.mutate({ id: task.id, data: { urgency: newUrgency } });
+      }
+    });
+  }, [tasks]);
+
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Task.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] })
