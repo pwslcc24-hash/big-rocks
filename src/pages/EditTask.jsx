@@ -40,7 +40,7 @@ export default function EditTask() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
         <div className="max-w-xl mx-auto px-4 py-8 sm:py-12">
           <Skeleton className="h-10 w-32 mb-6" />
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100">
@@ -84,7 +84,7 @@ export default function EditTask() {
           </Link>
 
           <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 p-6 sm:p-8">
-            <h1 className="text-2xl font-bold text-slate-800 mb-6">Edit Task</h1>
+            <h1 className="text-2xl font-bold text-[#002E5D] mb-6">Edit Task</h1>
             <TaskForm
               task={task}
               onSubmit={handleSubmit}

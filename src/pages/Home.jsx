@@ -50,7 +50,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
       <div className="max-w-2xl mx-auto px-4 py-8 sm:py-12">
         {/* Header */}
         <motion.div 
@@ -59,13 +59,13 @@ export default function Home() {
           className="flex items-center justify-between mb-8"
         >
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">My Tasks</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#002E5D]">Big Rocks</h1>
             <p className="text-slate-500 mt-1">
               {incompleteTasks.length} {incompleteTasks.length === 1 ? 'task' : 'tasks'} remaining
             </p>
           </div>
           <Link to={createPageUrl("AddTask")}>
-            <Button className="h-11 px-5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 shadow-lg shadow-indigo-500/25">
+            <Button className="h-11 px-5 rounded-xl bg-[#002E5D] hover:bg-[#001F3F] shadow-lg shadow-blue-900/25">
               <Plus className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Add Task</span>
               <span className="sm:hidden">Add</span>

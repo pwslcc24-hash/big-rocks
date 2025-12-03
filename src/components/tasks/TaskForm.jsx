@@ -68,7 +68,7 @@ export default function TaskForm({ task, onSubmit, onCancel, isLoading }) {
           placeholder="What needs to be done?"
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-          className="h-12 text-lg border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl"
+          className="h-12 text-lg border-slate-200 focus:border-[#002E5D] focus:ring-[#002E5D] rounded-xl"
           required
         />
       </div>
@@ -100,7 +100,7 @@ export default function TaskForm({ task, onSubmit, onCancel, isLoading }) {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <Label className="text-sm font-medium text-slate-700">Importance</Label>
-          <span className="text-sm font-semibold text-indigo-600">
+          <span className="text-sm font-semibold text-[#002E5D]">
             {formData.importance} - {importanceLabels[formData.importance - 1]}
           </span>
         </div>
@@ -178,7 +178,7 @@ export default function TaskForm({ task, onSubmit, onCancel, isLoading }) {
           placeholder="Add any additional details..."
           value={formData.notes}
           onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-          className="min-h-32 border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl resize-none"
+          className="min-h-32 border-slate-200 focus:border-[#002E5D] focus:ring-[#002E5D] rounded-xl resize-none"
         />
       </div>
 
@@ -194,7 +194,7 @@ export default function TaskForm({ task, onSubmit, onCancel, isLoading }) {
         </Button>
         <Button
           type="submit"
-          className="flex-1 h-12 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700"
+          className="flex-1 h-12 rounded-xl bg-[#002E5D] hover:bg-[#001F3F]"
           disabled={isLoading || !formData.title.trim()}
         >
           {isLoading ? "Saving..." : task ? "Update Task" : "Create Task"}
