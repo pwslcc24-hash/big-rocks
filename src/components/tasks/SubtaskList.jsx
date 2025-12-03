@@ -4,7 +4,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, X, Trash2, ChevronUp, ChevronDown } from "lucide-react";
+import { Plus, X, Trash2, GripVertical } from "lucide-react";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function SubtaskList({ taskId }) {
@@ -37,19 +38,26 @@ export default function SubtaskList({ taskId }) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['subtasks', taskId] })
   });
 
-  const moveSubtask = async (index, direction) => {
-    const newIndex = index + direction;
-    if (newIndex < 0 || newIndex >= sortedSubtasks.length) return;
+  const sortedSubtasks = [...subtasks].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  const handleDragEnd = async (result) => {
+    if (!result.destination) return;
     
-    const current = sortedSubtasks[index];
-    const target = sortedSubtasks[newIndex];
-    
-    await base44.entities.Subtask.update(current.id, { order: target.order });
-    await base44.entities.Subtask.update(target.id, { order: current.order });
+    const sourceIndex = result.source.index;
+    const destIndex = result.destination.index;
+    if (sourceIndex === destIndex) return;
+
+    const reordered = Array.from(sortedSubtasks);
+    const [removed] = reordered.splice(sourceIndex, 1);
+    reordered.splice(destIndex, 0, removed);
+
+    // Update all affected subtasks with new order
+    const updates = reordered.map((subtask, index) => 
+      base44.entities.Subtask.update(subtask.id, { order: index })
+    );
+    await Promise.all(updates);
     queryClient.invalidateQueries({ queryKey: ['subtasks', taskId] });
   };
-
-  const sortedSubtasks = [...subtasks].sort((a, b) => (a.order || 0) - (b.order || 0));
 
   const handleAddSubtask = (e) => {
     e.preventDefault();
@@ -82,57 +90,55 @@ export default function SubtaskList({ taskId }) {
         )}
       </div>
 
-      <div className="space-y-2">
-        <AnimatePresence mode="popLayout">
-          {sortedSubtasks.map((subtask, index) => (
-            <motion.div
-              key={subtask.id}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="flex items-center gap-3 group"
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="subtasks">
+          {(provided) => (
+            <div 
+              {...provided.droppableProps} 
+              ref={provided.innerRef}
+              className="space-y-2"
             >
-              <div className="flex flex-col opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => moveSubtask(index, -1)}
-                  disabled={index === 0}
-                  className="h-4 w-4 p-0 text-slate-400 hover:text-slate-600 disabled:opacity-30"
-                >
-                  <ChevronUp className="w-3 h-3" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => moveSubtask(index, 1)}
-                  disabled={index === sortedSubtasks.length - 1}
-                  className="h-4 w-4 p-0 text-slate-400 hover:text-slate-600 disabled:opacity-30"
-                >
-                  <ChevronDown className="w-3 h-3" />
-                </Button>
-              </div>
-              <Checkbox
-                checked={subtask.completed}
-                onCheckedChange={(checked) => 
-                  updateMutation.mutate({ id: subtask.id, data: { completed: checked } })
-                }
-                className="h-4 w-4 rounded border-slate-300 data-[state=checked]:bg-[#0047BA] data-[state=checked]:border-[#0047BA]"
-              />
-              <span className={`flex-1 text-sm ${subtask.completed ? "line-through text-slate-400" : "text-slate-700"}`}>
-                {subtask.title}
-              </span>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => deleteMutation.mutate(subtask.id)}
-                className="h-6 w-6 opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-opacity"
-              >
-                <Trash2 className="w-3 h-3" />
-              </Button>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+              {sortedSubtasks.map((subtask, index) => (
+                <Draggable key={subtask.id} draggableId={subtask.id} index={index}>
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      className={`flex items-center gap-3 group ${snapshot.isDragging ? "bg-white shadow-lg rounded-lg p-2 -ml-2" : ""}`}
+                    >
+                      <div
+                        {...provided.dragHandleProps}
+                        className="cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-500 transition-colors"
+                      >
+                        <GripVertical className="w-4 h-4" />
+                      </div>
+                      <Checkbox
+                        checked={subtask.completed}
+                        onCheckedChange={(checked) => 
+                          updateMutation.mutate({ id: subtask.id, data: { completed: checked } })
+                        }
+                        className="h-4 w-4 rounded border-slate-300 data-[state=checked]:bg-[#0047BA] data-[state=checked]:border-[#0047BA]"
+                      />
+                      <span className={`flex-1 text-sm ${subtask.completed ? "line-through text-slate-400" : "text-slate-700"}`}>
+                        {subtask.title}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => deleteMutation.mutate(subtask.id)}
+                        className="h-6 w-6 opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-opacity"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
 
         {isAdding && (
           <motion.form
