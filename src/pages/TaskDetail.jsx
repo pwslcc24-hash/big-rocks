@@ -34,7 +34,7 @@ const importanceColors = {
   2: "bg-blue-100 text-blue-700 border-blue-200",
   3: "bg-blue-200 text-blue-800 border-blue-300",
   4: "bg-blue-300 text-blue-900 border-blue-400",
-  5: "bg-[#002E5D] text-white border-[#001F3F]"
+  5: "bg-[#0047BA] text-white border-[#003A99]"
 };
 
 const urgencyLabels = ["Very Low", "Low", "Medium", "High", "Critical"];
@@ -124,7 +124,7 @@ export default function TaskDetail() {
                     {task.title}
                   </h1>
                   {task.completed && (
-                    <div className="flex items-center gap-2 mt-2 text-[#002E5D]">
+                    <div className="flex items-center gap-2 mt-2 text-[#0047BA]">
                       <CheckCircle2 className="w-4 h-4" />
                       <span className="text-sm font-medium">Completed</span>
                     </div>
@@ -225,7 +225,7 @@ export default function TaskDetail() {
                   className={`w-full h-12 rounded-xl ${
                     task.completed 
                       ? "bg-slate-600 hover:bg-slate-700" 
-                      : "bg-[#002E5D] hover:bg-[#001F3F]"
+                      : "bg-[#0047BA] hover:bg-[#003A99]"
                   }`}
                   disabled={toggleMutation.isPending}
                 >

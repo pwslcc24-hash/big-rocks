@@ -59,13 +59,13 @@ export default function Home() {
           className="flex items-center justify-between mb-8"
         >
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#002E5D]">Big Rocks</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#0047BA]">Big Rocks</h1>
             <p className="text-slate-500 mt-1">
               {incompleteTasks.length} {incompleteTasks.length === 1 ? 'task' : 'tasks'} remaining
             </p>
           </div>
           <Link to={createPageUrl("AddTask")}>
-            <Button className="h-11 px-5 rounded-xl bg-[#002E5D] hover:bg-[#001F3F] shadow-lg shadow-blue-900/25">
+            <Button className="h-11 px-5 rounded-xl bg-[#0047BA] hover:bg-[#003A99] shadow-lg shadow-blue-900/25">
               <Plus className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Add Task</span>
               <span className="sm:hidden">Add</span>

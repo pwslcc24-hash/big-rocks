@@ -20,7 +20,7 @@ const importanceColors = {
   2: "bg-blue-100 text-blue-700",
   3: "bg-blue-200 text-blue-800",
   4: "bg-blue-300 text-blue-900",
-  5: "bg-[#002E5D] text-white"
+  5: "bg-[#0047BA] text-white"
 };
 
 export default function TaskItem({ task, onToggleComplete }) {
@@ -39,7 +39,7 @@ export default function TaskItem({ task, onToggleComplete }) {
           <Checkbox
             checked={task.completed}
             onCheckedChange={() => onToggleComplete(task)}
-            className="h-5 w-5 rounded-full border-2 border-slate-300 data-[state=checked]:bg-[#002E5D] data-[state=checked]:border-[#002E5D]"
+            className="h-5 w-5 rounded-full border-2 border-slate-300 data-[state=checked]:bg-[#0047BA] data-[state=checked]:border-[#0047BA]"
           />
         </div>
         

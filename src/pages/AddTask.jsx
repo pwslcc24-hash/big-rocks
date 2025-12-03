@@ -40,7 +40,7 @@ export default function AddTask() {
           </Link>
 
           <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 p-6 sm:p-8">
-            <h1 className="text-2xl font-bold text-[#002E5D] mb-6">Create New Task</h1>
+            <h1 className="text-2xl font-bold text-[#0047BA] mb-6">Create New Task</h1>
             <TaskForm
               onSubmit={handleSubmit}
               onCancel={() => navigate(createPageUrl("Home"))}
