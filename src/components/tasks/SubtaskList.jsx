@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, X, Trash2 } from "lucide-react";
+import { Plus, X, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function SubtaskList({ taskId }) {
@@ -47,7 +47,22 @@ export default function SubtaskList({ taskId }) {
     });
   };
 
+  const sortedSubtasks = [...subtasks].sort((a, b) => (a.order || 0) - (b.order || 0));
   const completedCount = subtasks.filter(s => s.completed).length;
+
+  const handleMoveSubtask = (subtask, direction) => {
+    const currentIndex = sortedSubtasks.findIndex(s => s.id === subtask.id);
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    
+    if (newIndex < 0 || newIndex >= sortedSubtasks.length) return;
+    
+    const otherSubtask = sortedSubtasks[newIndex];
+    const currentOrder = subtask.order || 0;
+    const otherOrder = otherSubtask.order || 0;
+    
+    updateMutation.mutate({ id: subtask.id, data: { order: otherOrder } });
+    updateMutation.mutate({ id: otherSubtask.id, data: { order: currentOrder } });
+  };
 
   return (
     <div className="bg-slate-50 rounded-2xl p-4">
@@ -70,14 +85,34 @@ export default function SubtaskList({ taskId }) {
 
       <div className="space-y-2">
         <AnimatePresence mode="popLayout">
-          {subtasks.map((subtask) => (
+          {sortedSubtasks.map((subtask, index) => (
             <motion.div
               key={subtask.id}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="flex items-center gap-3 group"
+              className="flex items-center gap-2 group"
             >
+              <div className="flex flex-col">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleMoveSubtask(subtask, 'up')}
+                  disabled={index === 0}
+                  className="h-4 w-4 p-0 text-slate-400 hover:text-slate-600 disabled:opacity-30"
+                >
+                  <ChevronUp className="w-3 h-3" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleMoveSubtask(subtask, 'down')}
+                  disabled={index === sortedSubtasks.length - 1}
+                  className="h-4 w-4 p-0 text-slate-400 hover:text-slate-600 disabled:opacity-30"
+                >
+                  <ChevronDown className="w-3 h-3" />
+                </Button>
+              </div>
               <Checkbox
                 checked={subtask.completed}
                 onCheckedChange={(checked) => 

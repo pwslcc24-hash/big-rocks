@@ -1,7 +1,8 @@
 import React from 'react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, ChevronRight, Repeat } from "lucide-react";
+import { Calendar, ChevronRight, Repeat, ChevronUp, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -23,7 +24,7 @@ const importanceColors = {
   5: "bg-[#0047BA] text-white"
 };
 
-export default function TaskItem({ task, onToggleComplete }) {
+export default function TaskItem({ task, onToggleComplete, onMoveUp, onMoveDown, canMoveUp, canMoveDown }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -35,6 +36,28 @@ export default function TaskItem({ task, onToggleComplete }) {
       }`}
     >
       <div className="flex items-start gap-4">
+        {!task.completed && (onMoveUp || onMoveDown) && (
+          <div className="flex flex-col -my-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => { e.preventDefault(); onMoveUp?.(); }}
+              disabled={!canMoveUp}
+              className="h-5 w-5 p-0 text-slate-400 hover:text-slate-600 disabled:opacity-30"
+            >
+              <ChevronUp className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => { e.preventDefault(); onMoveDown?.(); }}
+              disabled={!canMoveDown}
+              className="h-5 w-5 p-0 text-slate-400 hover:text-slate-600 disabled:opacity-30"
+            >
+              <ChevronDown className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
         <div className="pt-0.5">
           <Checkbox
             checked={task.completed}
