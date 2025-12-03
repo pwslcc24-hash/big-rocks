@@ -88,12 +88,7 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center justify-between mb-8"
         >
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#0047BA]">Big Rocks</h1>
-            <p className="text-slate-500 mt-1">
-              {incompleteTasks.length} {incompleteTasks.length === 1 ? 'task' : 'tasks'} remaining
-            </p>
-            </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#0047BA]">Big Rocks</h1>
             <div className="flex flex-col items-end gap-2">
             <Link to={createPageUrl("AddTask")}>
             <Button className="h-11 px-5 rounded-xl bg-[#0047BA] hover:bg-[#003A99] shadow-lg shadow-blue-900/25">
