@@ -19,7 +19,7 @@ export default function TaskForm({ task, onSubmit, onCancel, isLoading }) {
     notes: "",
     completed: false
   });
-  const [time, setTime] = useState("12:00");
+  const [time, setTime] = useState({ hour: "12", minute: "00", period: "PM" });
 
   useEffect(() => {
     if (task) {
@@ -32,7 +32,15 @@ export default function TaskForm({ task, onSubmit, onCancel, isLoading }) {
         completed: task.completed || false
       });
       if (task.deadline) {
-        setTime(format(new Date(task.deadline), "HH:mm"));
+        const d = new Date(task.deadline);
+        const hours = d.getHours();
+        const period = hours >= 12 ? "PM" : "AM";
+        const hour12 = hours % 12 || 12;
+        setTime({
+          hour: String(hour12),
+          minute: String(d.getMinutes()).padStart(2, '0'),
+          period
+        });
       }
     }
   }, [task]);
@@ -41,9 +49,11 @@ export default function TaskForm({ task, onSubmit, onCancel, isLoading }) {
     e.preventDefault();
     const submitData = { ...formData };
     if (formData.deadline && time) {
-      const [hours, minutes] = time.split(":");
+      let hours = parseInt(time.hour);
+      if (time.period === "PM" && hours !== 12) hours += 12;
+      if (time.period === "AM" && hours === 12) hours = 0;
       const deadline = new Date(formData.deadline);
-      deadline.setHours(parseInt(hours), parseInt(minutes));
+      deadline.setHours(hours, parseInt(time.minute));
       submitData.deadline = deadline.toISOString();
     } else if (!formData.deadline) {
       submitData.deadline = null;
@@ -146,15 +156,35 @@ export default function TaskForm({ task, onSubmit, onCancel, isLoading }) {
           </Popover>
           
           <div className="flex items-center gap-2">
-            <div className="relative flex-1 sm:w-32">
-              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <div className="flex items-center gap-1">
               <Input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                className="h-12 pl-10 rounded-xl border-slate-200"
+                type="number"
+                min="1"
+                max="12"
+                value={time.hour}
+                onChange={(e) => setTime({ ...time, hour: e.target.value })}
+                className="h-12 w-14 text-center rounded-xl border-slate-200"
                 disabled={!formData.deadline}
               />
+              <span className="text-slate-400">:</span>
+              <Input
+                type="number"
+                min="0"
+                max="59"
+                value={time.minute}
+                onChange={(e) => setTime({ ...time, minute: e.target.value.padStart(2, '0') })}
+                className="h-12 w-14 text-center rounded-xl border-slate-200"
+                disabled={!formData.deadline}
+              />
+              <select
+                value={time.period}
+                onChange={(e) => setTime({ ...time, period: e.target.value })}
+                className="h-12 px-2 rounded-xl border border-slate-200 bg-white text-sm"
+                disabled={!formData.deadline}
+              >
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+              </select>
             </div>
             {formData.deadline && (
               <Button
