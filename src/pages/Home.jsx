@@ -2,7 +2,7 @@ import React, { useMemo, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
-import { Plus, CheckCircle2, ChevronRight } from "lucide-react";
+import { Plus, CheckCircle2, ChevronRight, Repeat } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { AnimatePresence, motion } from "framer-motion";
@@ -22,6 +22,45 @@ export default function Home() {
     mutationFn: ({ id, data }) => base44.entities.Task.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] })
   });
+
+  const createMutation = useMutation({
+    mutationFn: (data) => base44.entities.Task.create(data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] })
+  });
+
+  // Generate next recurring task instance
+  const generateNextRecurrence = (task) => {
+    if (!task.recurrence || task.recurrence === "none" || !task.deadline) return;
+
+    const currentDeadline = new Date(task.deadline);
+    let nextDeadline = new Date(currentDeadline);
+
+    switch (task.recurrence) {
+      case "daily":
+        nextDeadline.setDate(nextDeadline.getDate() + 1);
+        break;
+      case "weekly":
+        nextDeadline.setDate(nextDeadline.getDate() + 7);
+        break;
+      case "monthly":
+        nextDeadline.setMonth(nextDeadline.getMonth() + 1);
+        break;
+      case "yearly":
+        nextDeadline.setFullYear(nextDeadline.getFullYear() + 1);
+        break;
+    }
+
+    createMutation.mutate({
+      title: task.title,
+      urgency: task.urgency,
+      importance: task.importance,
+      deadline: nextDeadline.toISOString(),
+      notes: task.notes,
+      recurrence: task.recurrence,
+      completed: false,
+      parent_task_id: task.parent_task_id || task.id
+    });
+  };
 
   // Sort algorithm: Urgency first (descending), then Importance (descending)
   const sortedTasks = useMemo(() => {
@@ -43,13 +82,20 @@ export default function Home() {
   const completedTasks = sortedTasks.filter(t => t.completed);
 
   const handleToggleComplete = (task) => {
+    const isCompleting = !task.completed;
+    
     updateMutation.mutate({
       id: task.id,
       data: { 
-        completed: !task.completed,
-        completed_at: !task.completed ? new Date().toISOString() : null
+        completed: isCompleting,
+        completed_at: isCompleting ? new Date().toISOString() : null
       }
     });
+
+    // Generate next recurring task when completing
+    if (isCompleting && task.recurrence && task.recurrence !== "none") {
+      generateNextRecurrence(task);
+    }
   };
 
   // Move tasks to completed after 5 minutes

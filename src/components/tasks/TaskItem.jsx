@@ -1,7 +1,7 @@
 import React from 'react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, ChevronRight } from "lucide-react";
+import { Calendar, ChevronRight, Repeat } from "lucide-react";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -64,11 +64,18 @@ export default function TaskItem({ task, onToggleComplete }) {
                 </Badge>
                 
                 {task.deadline && (
-                  <span className="flex items-center gap-1 text-xs text-slate-500">
-                    <Calendar className="w-3 h-3" />
-                    {format(new Date(task.deadline), "MMM d, h:mm a")}
-                  </span>
-                )}
+                    <span className="flex items-center gap-1 text-xs text-slate-500">
+                      <Calendar className="w-3 h-3" />
+                      {format(new Date(task.deadline), "MMM d, h:mm a")}
+                    </span>
+                  )}
+
+                  {task.recurrence && task.recurrence !== "none" && (
+                    <span className="flex items-center gap-1 text-xs text-purple-600">
+                      <Repeat className="w-3 h-3" />
+                      {task.recurrence}
+                    </span>
+                  )}
               </div>
             </div>
             

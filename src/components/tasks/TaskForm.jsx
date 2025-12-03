@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar as CalendarIcon, Clock, X } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, X, Repeat } from "lucide-react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 
@@ -17,7 +17,8 @@ export default function TaskForm({ task, onSubmit, onCancel, isLoading }) {
     importance: 3,
     deadline: null,
     notes: "",
-    completed: false
+    completed: false,
+    recurrence: "none"
   });
   const [time, setTime] = useState({ hour: "12", minute: "00", period: "PM" });
 
@@ -29,7 +30,8 @@ export default function TaskForm({ task, onSubmit, onCancel, isLoading }) {
         importance: task.importance || 3,
         deadline: task.deadline ? new Date(task.deadline) : null,
         notes: task.notes || "",
-        completed: task.completed || false
+        completed: task.completed || false,
+        recurrence: task.recurrence || "none"
       });
       if (task.deadline) {
         const d = new Date(task.deadline);
@@ -198,6 +200,24 @@ export default function TaskForm({ task, onSubmit, onCancel, isLoading }) {
               </Button>
             )}
           </div>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-sm font-medium text-slate-700">Repeat</Label>
+        <div className="flex items-center gap-2">
+          <Repeat className="w-4 h-4 text-slate-400" />
+          <select
+            value={formData.recurrence}
+            onChange={(e) => setFormData({ ...formData, recurrence: e.target.value })}
+            className="h-12 px-4 flex-1 rounded-xl border border-slate-200 bg-white text-sm"
+          >
+            <option value="none">Does not repeat</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
         </div>
       </div>
 
