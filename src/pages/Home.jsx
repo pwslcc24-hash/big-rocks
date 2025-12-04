@@ -4,7 +4,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Plus, CheckCircle2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import TaskItem from "@/components/tasks/TaskItem";
 import EmptyState from "@/components/tasks/EmptyState";
 import ListSelector from "@/components/lists/ListSelector";
@@ -18,7 +17,6 @@ export default function Home() {
   const [taskDialogOpen, setTaskDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [completedDialogOpen, setCompletedDialogOpen] = useState(false);
-  const [manualOrder, setManualOrder] = useState([]);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -153,35 +151,23 @@ export default function Home() {
     return task.urgency;
   };
 
-  // Sort algorithm: Manual order first, then Effective Urgency, then Importance
-      const sortedTasks = useMemo(() => {
-        return [...tasks].sort((a, b) => {
-          // First, separate completed from incomplete
-          if (a.completed !== b.completed) {
-            return a.completed ? 1 : -1;
-          }
-
-          // Check manual order
-          const aManualIndex = manualOrder.indexOf(a.id);
-          const bManualIndex = manualOrder.indexOf(b.id);
-
-          // If both have manual order, use it
-          if (aManualIndex !== -1 && bManualIndex !== -1) {
-            return aManualIndex - bManualIndex;
-          }
-          // If only one has manual order, prioritize it
-          if (aManualIndex !== -1) return -1;
-          if (bManualIndex !== -1) return 1;
-
-          // Fallback to urgency/importance sorting
-          const aUrgency = getEffectiveUrgency(a);
-          const bUrgency = getEffectiveUrgency(b);
-          if (bUrgency !== aUrgency) {
-            return bUrgency - aUrgency;
-          }
-          return b.importance - a.importance;
-        });
-      }, [tasks, manualOrder]);
+  // Sort algorithm: Effective Urgency first (descending), then Importance (descending)
+  const sortedTasks = useMemo(() => {
+    return [...tasks].sort((a, b) => {
+      // First, separate completed from incomplete
+      if (a.completed !== b.completed) {
+        return a.completed ? 1 : -1;
+      }
+      // Then sort by effective urgency (higher first)
+      const aUrgency = getEffectiveUrgency(a);
+      const bUrgency = getEffectiveUrgency(b);
+      if (bUrgency !== aUrgency) {
+        return bUrgency - aUrgency;
+      }
+      // Then by importance (higher first)
+      return b.importance - a.importance;
+    });
+  }, [tasks]);
 
   const incompleteTasks = sortedTasks.filter(t => !t.completed);
   const completedTasks = sortedTasks.filter(t => t.completed);
@@ -233,26 +219,9 @@ export default function Home() {
   };
 
   const handleCloseTaskDialog = () => {
-        setTaskDialogOpen(false);
-        setEditingTask(null);
-      };
-
-      const handleDragEnd = (result) => {
-        if (!result.destination) return;
-
-        const sourceIndex = result.source.index;
-        const destIndex = result.destination.index;
-
-        if (sourceIndex === destIndex) return;
-
-        // Reorder incomplete tasks
-        const reordered = Array.from(incompleteTasks);
-        const [removed] = reordered.splice(sourceIndex, 1);
-        reordered.splice(destIndex, 0, removed);
-
-        // Update manual order with new task IDs order
-        setManualOrder(reordered.map(t => t.id));
-      };
+    setTaskDialogOpen(false);
+    setEditingTask(null);
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -317,52 +286,30 @@ export default function Home() {
           <div className="space-y-6">
             {/* Current Tasks */}
             {(incompleteTasks.length > 0 || recentlyCompletedTasks.length > 0) && (
-                                <div>
-                                  <h2 className="text-base font-medium text-[#0047BA] mb-3">Current Tasks</h2>
-                                  <DragDropContext onDragEnd={handleDragEnd}>
-                                    <Droppable droppableId="tasks">
-                                      {(provided) => (
-                                        <div
-                                          {...provided.droppableProps}
-                                          ref={provided.innerRef}
-                                          className="space-y-3"
-                                        >
-                                          {incompleteTasks.map((task, index) => (
-                                            <Draggable key={task.id} draggableId={task.id} index={index}>
-                                              {(provided, snapshot) => (
-                                                <div
-                                                  ref={provided.innerRef}
-                                                  {...provided.draggableProps}
-                                                  {...provided.dragHandleProps}
-                                                  style={provided.draggableProps.style}
-                                                  className={snapshot.isDragging ? "opacity-90" : ""}
-                                                >
-                                                  <TaskItem
-                                                    task={task}
-                                                    onToggleComplete={handleToggleComplete}
-                                                    onOpenTask={handleOpenTask}
-                                                  />
-                                                </div>
-                                              )}
-                                            </Draggable>
-                                          ))}
-                                          {provided.placeholder}
-                                          <AnimatePresence mode="popLayout">
-                                            {recentlyCompletedTasks.map((task) => (
-                                              <TaskItem
-                                                key={task.id}
-                                                task={task}
-                                                onToggleComplete={handleToggleComplete}
-                                                onOpenTask={handleOpenTask}
-                                              />
-                                            ))}
-                                          </AnimatePresence>
-                                        </div>
-                                      )}
-                                    </Droppable>
-                                  </DragDropContext>
-                                </div>
-                              )}
+              <div>
+                <h2 className="text-base font-medium text-[#0047BA] mb-3">Current Tasks</h2>
+                <div className="space-y-3">
+                  <AnimatePresence mode="popLayout">
+                    {incompleteTasks.map((task) => (
+                        <TaskItem
+                          key={task.id}
+                          task={task}
+                          onToggleComplete={handleToggleComplete}
+                          onOpenTask={handleOpenTask}
+                        />
+                      ))}
+                      {recentlyCompletedTasks.map((task) => (
+                        <TaskItem
+                          key={task.id}
+                          task={task}
+                          onToggleComplete={handleToggleComplete}
+                          onOpenTask={handleOpenTask}
+                        />
+                      ))}
+                  </AnimatePresence>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
