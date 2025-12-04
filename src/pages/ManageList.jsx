@@ -102,7 +102,67 @@ export default function ManageList() {
           </Link>
 
           <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 p-6 sm:p-8">
-            <h1 className="text-2xl font-bold text-[#0047BA] mb-6">Manage "{list.name}"</h1>
+            {/* List Name */}
+            <div className="mb-6">
+              {isEditingName ? (
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={editedName}
+                    onChange={(e) => setEditedName(e.target.value)}
+                    className="text-2xl font-bold rounded-xl"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && editedName.trim()) {
+                        updateMutation.mutate({ name: editedName.trim() });
+                        setIsEditingName(false);
+                      }
+                      if (e.key === 'Escape') {
+                        setIsEditingName(false);
+                        setEditedName(list.name);
+                      }
+                    }}
+                  />
+                  <Button
+                    size="icon"
+                    onClick={() => {
+                      if (editedName.trim()) {
+                        updateMutation.mutate({ name: editedName.trim() });
+                        setIsEditingName(false);
+                      }
+                    }}
+                    className="rounded-xl bg-[#0047BA] hover:bg-[#003A99]"
+                  >
+                    <Check className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={() => {
+                      setIsEditingName(false);
+                      setEditedName(list.name);
+                    }}
+                    className="rounded-xl"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <h1 className="text-2xl font-bold text-[#0047BA]">{list.name}</h1>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => {
+                      setEditedName(list.name);
+                      setIsEditingName(true);
+                    }}
+                    className="h-8 w-8 text-slate-400 hover:text-[#0047BA]"
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
 
             {/* Share with users */}
             <div className="mb-8">
