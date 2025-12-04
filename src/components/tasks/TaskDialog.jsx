@@ -28,8 +28,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import SubtaskList from "./SubtaskList";
+import TagPicker from "../tags/TagPicker";
 
-export default function TaskDialog({ open, onClose, task, listId }) {
+export default function TaskDialog({ open, onClose, task, listId, userEmail }) {
   const queryClient = useQueryClient();
   const isEditing = !!task;
 
@@ -39,7 +40,8 @@ export default function TaskDialog({ open, onClose, task, listId }) {
     importance: 3,
     deadline: null,
     notes: "",
-    recurrence: "none"
+    recurrence: "none",
+    tag_ids: []
   });
   const [time, setTime] = useState({ hour: "12", minute: "00", period: "PM" });
 
@@ -51,7 +53,8 @@ export default function TaskDialog({ open, onClose, task, listId }) {
         importance: task.importance || 3,
         deadline: task.deadline ? new Date(task.deadline) : null,
         notes: task.notes || "",
-        recurrence: task.recurrence || "none"
+        recurrence: task.recurrence || "none",
+        tag_ids: task.tag_ids || []
       });
       if (task.deadline) {
         const d = new Date(task.deadline);
@@ -71,7 +74,8 @@ export default function TaskDialog({ open, onClose, task, listId }) {
         importance: 3,
         deadline: null,
         notes: "",
-        recurrence: "none"
+        recurrence: "none",
+        tag_ids: []
       });
       setTime({ hour: "12", minute: "00", period: "PM" });
     }
@@ -266,8 +270,17 @@ export default function TaskDialog({ open, onClose, task, listId }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes" className="text-sm font-medium text-gray-700">Notes (Optional)</Label>
-            <Textarea
+                          <Label className="text-sm font-medium text-gray-700">Tags</Label>
+                          <TagPicker
+                            selectedTagIds={formData.tag_ids}
+                            onChange={(tagIds) => setFormData({ ...formData, tag_ids: tagIds })}
+                            userEmail={userEmail}
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="notes" className="text-sm font-medium text-gray-700">Notes (Optional)</Label>
+                          <Textarea
               id="notes"
               placeholder="Add any additional details..."
               value={formData.notes}
