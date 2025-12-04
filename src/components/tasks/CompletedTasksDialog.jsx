@@ -8,8 +8,9 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
+import TagBadge from "../tags/TagBadge";
 
-export default function CompletedTasksDialog({ open, onClose, tasks, onToggleComplete }) {
+export default function CompletedTasksDialog({ open, onClose, tasks, onToggleComplete, tags = [] }) {
   const completedTasks = tasks.filter(t => t.completed);
 
   return (
@@ -39,8 +40,15 @@ export default function CompletedTasksDialog({ open, onClose, tasks, onToggleCom
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-[#C7C9C7] line-through truncate">{task.title}</p>
+                    {task.tag_ids?.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {tags.filter(t => task.tag_ids.includes(t.id)).map(tag => (
+                          <TagBadge key={tag.id} tag={tag} size="sm" />
+                        ))}
+                      </div>
+                    )}
                     {task.completed_at && (
-                      <p className="text-xs text-[#C7C9C7]/70">
+                      <p className="text-xs text-[#C7C9C7]/70 mt-1">
                         Completed {format(new Date(task.completed_at), "MMM d, h:mm a")}
                       </p>
                     )}
