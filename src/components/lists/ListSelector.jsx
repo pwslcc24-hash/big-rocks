@@ -95,15 +95,13 @@ export default function ListSelector({ currentList, onListChange, userEmail }) {
                             )}
                             {list.name}
                           </div>
-                          {!list.is_personal && (
-                            <Link 
-                              to={createPageUrl(`ManageList?id=${list.id}`)}
-                              onClick={(e) => e.stopPropagation()}
-                              className="ml-2 p-1 hover:bg-slate-100 rounded"
-                            >
-                              <Settings className="w-3.5 h-3.5 text-slate-400 hover:text-[#0047BA]" />
-                            </Link>
-                          )}
+                          <Link 
+                            to={createPageUrl(`ManageList?id=${list.id}`)}
+                            onClick={(e) => e.stopPropagation()}
+                            className="ml-2 p-1 hover:bg-slate-100 rounded"
+                          >
+                            <Settings className="w-3.5 h-3.5 text-slate-400 hover:text-[#0047BA]" />
+                          </Link>
                         </DropdownMenuItem>
                       ))}
               </>
