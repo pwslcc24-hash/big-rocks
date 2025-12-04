@@ -63,15 +63,15 @@ export default function ManageListDialog({ open, onClose, list, user }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg rounded-2xl">
+      <DialogContent className="max-w-lg rounded-lg bg-white border-[#C7C9C7]/30">
         <DialogHeader>
-          <DialogTitle className="text-[#0047BA]">Manage List</DialogTitle>
+          <DialogTitle className="text-[#0047BA] font-semibold">Manage List</DialogTitle>
         </DialogHeader>
 
         {!isOwner ? (
-          <p className="text-slate-500">Only the list owner can manage this list.</p>
+          <p className="text-[#C7C9C7]">Only the list owner can manage this list.</p>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-5">
             {/* List Name */}
             <div>
               {isEditingName ? (
@@ -79,7 +79,7 @@ export default function ManageListDialog({ open, onClose, list, user }) {
                   <Input
                     value={editedName}
                     onChange={(e) => setEditedName(e.target.value)}
-                    className="text-lg font-semibold rounded-xl"
+                    className="text-lg font-semibold rounded-lg border-[#C7C9C7]/50"
                     autoFocus
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && editedName.trim()) {
@@ -100,7 +100,7 @@ export default function ManageListDialog({ open, onClose, list, user }) {
                         setIsEditingName(false);
                       }
                     }}
-                    className="rounded-xl bg-[#0047BA] hover:bg-[#003A99]"
+                    className="rounded-lg bg-[#0047BA] hover:bg-[#003A99]"
                   >
                     <Check className="w-4 h-4" />
                   </Button>
@@ -111,14 +111,14 @@ export default function ManageListDialog({ open, onClose, list, user }) {
                       setIsEditingName(false);
                       setEditedName(list.name);
                     }}
-                    className="rounded-xl"
+                    className="rounded-lg border-[#C7C9C7]/50"
                   >
                     <X className="w-4 h-4" />
                   </Button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-semibold text-slate-800">{list.name}</h2>
+                  <h2 className="text-lg font-semibold text-gray-800">{list.name}</h2>
                   <Button
                     size="icon"
                     variant="ghost"
@@ -126,7 +126,7 @@ export default function ManageListDialog({ open, onClose, list, user }) {
                       setEditedName(list.name);
                       setIsEditingName(true);
                     }}
-                    className="h-8 w-8 text-slate-400 hover:text-[#0047BA]"
+                    className="h-8 w-8 text-[#C7C9C7] hover:text-[#0047BA]"
                   >
                     <Pencil className="w-4 h-4" />
                   </Button>
@@ -135,10 +135,10 @@ export default function ManageListDialog({ open, onClose, list, user }) {
             </div>
 
             {/* Set as default */}
-            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+            <div className="flex items-center justify-between p-4 bg-[#C7C9C7]/10 rounded-lg">
               <div>
-                <p className="font-medium text-slate-700">Default List</p>
-                <p className="text-sm text-slate-500">Opens on login</p>
+                <p className="font-medium text-gray-700">Default List</p>
+                <p className="text-sm text-[#C7C9C7]">Opens on login</p>
               </div>
               <Button
                 variant={user?.default_list_id === list.id ? "default" : "outline"}
@@ -148,7 +148,7 @@ export default function ManageListDialog({ open, onClose, list, user }) {
                   });
                   queryClient.invalidateQueries({ queryKey: ['currentUser'] });
                 }}
-                className={`rounded-xl ${user?.default_list_id === list.id ? 'bg-[#0047BA] hover:bg-[#003A99]' : ''}`}
+                className={`rounded-lg ${user?.default_list_id === list.id ? 'bg-[#0047BA] hover:bg-[#003A99] text-white' : 'border-[#C7C9C7]/50'}`}
               >
                 <Star className={`w-4 h-4 mr-2 ${user?.default_list_id === list.id ? 'fill-current' : ''}`} />
                 {user?.default_list_id === list.id ? 'Default' : 'Set Default'}
@@ -157,18 +157,18 @@ export default function ManageListDialog({ open, onClose, list, user }) {
 
             {/* Share with users */}
             <div>
-              <h3 className="font-medium text-slate-700 mb-3">Share with Others</h3>
+              <h3 className="font-medium text-gray-700 mb-3">Share with Others</h3>
               <div className="flex gap-2 mb-3">
                 <Input
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   placeholder="Enter email..."
-                  className="rounded-xl"
+                  className="rounded-lg border-[#C7C9C7]/50"
                   onKeyDown={(e) => e.key === 'Enter' && handleAddUser()}
                 />
                 <Button 
                   onClick={handleAddUser}
-                  className="rounded-xl bg-[#0047BA] hover:bg-[#003A99]"
+                  className="rounded-lg bg-[#0047BA] hover:bg-[#003A99]"
                 >
                   <UserPlus className="w-4 h-4" />
                 </Button>
@@ -177,13 +177,13 @@ export default function ManageListDialog({ open, onClose, list, user }) {
               {list.shared_with && list.shared_with.length > 0 ? (
                 <div className="space-y-2">
                   {list.shared_with.map(email => (
-                    <div key={email} className="flex items-center justify-between bg-slate-50 rounded-xl p-3">
-                      <span className="text-slate-700 text-sm">{email}</span>
+                    <div key={email} className="flex items-center justify-between bg-[#C7C9C7]/10 rounded-lg p-3">
+                      <span className="text-gray-700 text-sm">{email}</span>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => handleRemoveUser(email)}
-                        className="h-7 w-7 text-slate-400 hover:text-red-500"
+                        className="h-7 w-7 text-[#C7C9C7] hover:text-red-500"
                       >
                         <X className="w-4 h-4" />
                       </Button>
@@ -191,20 +191,20 @@ export default function ManageListDialog({ open, onClose, list, user }) {
                   ))}
                 </div>
               ) : (
-                <p className="text-slate-400 text-sm">No one else has access yet.</p>
+                <p className="text-[#C7C9C7] text-sm">No one else has access yet.</p>
               )}
             </div>
 
             {/* Delete list */}
-            <div className="pt-4 border-t border-slate-100">
+            <div className="pt-4 border-t border-[#C7C9C7]/20">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="outline" className="w-full rounded-xl border-red-200 text-red-600 hover:bg-red-50">
+                  <Button variant="outline" className="w-full rounded-lg border-red-200 text-red-500 hover:bg-red-50">
                     <Trash2 className="w-4 h-4 mr-2" />
                     Delete List
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="rounded-2xl">
+                <AlertDialogContent className="rounded-lg">
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete List</AlertDialogTitle>
                     <AlertDialogDescription>
@@ -212,10 +212,10 @@ export default function ManageListDialog({ open, onClose, list, user }) {
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+                    <AlertDialogCancel className="rounded-lg">Cancel</AlertDialogCancel>
                     <AlertDialogAction 
                       onClick={() => deleteMutation.mutate()}
-                      className="rounded-xl bg-red-600 hover:bg-red-700"
+                      className="rounded-lg bg-red-500 hover:bg-red-600"
                     >
                       Delete
                     </AlertDialogAction>

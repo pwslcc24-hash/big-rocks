@@ -8,18 +8,18 @@ import { format } from "date-fns";
 import { motion } from "framer-motion";
 
 const urgencyColors = {
-  1: "bg-slate-100 text-slate-600",
-  2: "bg-blue-100 text-blue-700",
-  3: "bg-amber-100 text-amber-700",
-  4: "bg-orange-100 text-orange-700",
-  5: "bg-red-100 text-red-700"
+  1: "bg-[#C7C9C7]/20 text-[#C7C9C7]",
+  2: "bg-[#C7C9C7]/30 text-gray-600",
+  3: "bg-amber-50 text-amber-600",
+  4: "bg-orange-50 text-orange-600",
+  5: "bg-red-50 text-red-600"
 };
 
 const importanceColors = {
-  1: "bg-slate-100 text-slate-600",
-  2: "bg-blue-100 text-blue-700",
-  3: "bg-blue-200 text-blue-800",
-  4: "bg-blue-300 text-blue-900",
+  1: "bg-[#C7C9C7]/20 text-[#C7C9C7]",
+  2: "bg-[#0047BA]/10 text-[#0047BA]/60",
+  3: "bg-[#0047BA]/15 text-[#0047BA]/80",
+  4: "bg-[#0047BA]/25 text-[#0047BA]",
   5: "bg-[#0047BA] text-white"
 };
 
@@ -37,8 +37,8 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -20 }}
       layout
-      className={`group relative bg-white rounded-2xl border border-slate-100 p-4 sm:p-5 hover:shadow-lg hover:border-slate-200 transition-all duration-300 ${
-        task.completed ? "opacity-60" : ""
+      className={`group relative bg-white rounded-lg border border-[#C7C9C7]/30 p-4 sm:p-5 hover:border-[#0047BA]/30 hover:shadow-sm transition-all duration-200 ${
+        task.completed ? "opacity-50" : ""
       }`}
     >
       <div className="flex items-start gap-4">
@@ -46,7 +46,7 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
           <Checkbox
             checked={task.completed}
             onCheckedChange={() => onToggleComplete(task)}
-            className="h-5 w-5 rounded-full border-2 border-slate-300 data-[state=checked]:bg-[#0047BA] data-[state=checked]:border-[#0047BA]"
+            className="h-5 w-5 rounded-full border-2 border-[#C7C9C7] data-[state=checked]:bg-[#0047BA] data-[state=checked]:border-[#0047BA]"
           />
         </div>
         
@@ -56,36 +56,36 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <h3 className={`text-base sm:text-lg font-medium text-slate-800 truncate ${
-                task.completed ? "line-through text-slate-400" : ""
+              <h3 className={`text-base sm:text-lg font-medium text-gray-800 truncate ${
+                task.completed ? "line-through text-[#C7C9C7]" : ""
               }`}>
                 {task.title}
               </h3>
               
               <div className="flex flex-wrap items-center gap-2 mt-2">
-                <Badge className={`${urgencyColors[task.urgency]} border-0 text-xs font-medium`}>
+                <Badge className={`${urgencyColors[task.urgency]} border-0 text-xs font-medium rounded-md`}>
                   Urgency: {task.urgency}
                 </Badge>
-                <Badge className={`${importanceColors[task.importance]} border-0 text-xs font-medium`}>
+                <Badge className={`${importanceColors[task.importance]} border-0 text-xs font-medium rounded-md`}>
                   Importance: {task.importance}
                 </Badge>
                 
                 {task.deadline && (
-                    <span className="flex items-center gap-1 text-xs text-slate-500">
+                    <span className="flex items-center gap-1 text-xs text-[#C7C9C7]">
                       <Calendar className="w-3 h-3" />
                       {format(new Date(task.deadline), "MMM d, h:mm a")}
                     </span>
                   )}
 
                   {task.recurrence && task.recurrence !== "none" && (
-                    <span className="flex items-center gap-1 text-xs text-purple-600">
+                    <span className="flex items-center gap-1 text-xs text-[#0047BA]">
                       <Repeat className="w-3 h-3" />
                       {task.recurrence}
                     </span>
                   )}
 
                   {subtasks.length > 0 && (
-                    <span className="flex items-center gap-1 text-xs text-slate-500">
+                    <span className="flex items-center gap-1 text-xs text-[#C7C9C7]">
                       <ListChecks className="w-3 h-3" />
                       {completedSubtasks}/{subtasks.length}
                     </span>
@@ -93,7 +93,7 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
               </div>
             </div>
             
-            <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-slate-500 transition-colors flex-shrink-0" />
+            <ChevronRight className="w-5 h-5 text-[#C7C9C7] group-hover:text-[#0047BA] transition-colors flex-shrink-0" />
           </div>
           </button>
       </div>

@@ -128,30 +128,30 @@ export default function TaskDialog({ open, onClose, task, listId }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto rounded-lg bg-white border-[#C7C9C7]/30">
         <DialogHeader>
-          <DialogTitle className="text-[#0047BA]">
+          <DialogTitle className="text-[#0047BA] font-semibold">
             {isEditing ? "Edit Task" : "Create New Task"}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-sm font-medium text-slate-700">Task Title</Label>
+            <Label htmlFor="title" className="text-sm font-medium text-gray-700">Task Title</Label>
             <Input
               id="title"
               placeholder="What needs to be done?"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="h-11 border-slate-200 focus:border-[#0047BA] focus:ring-[#0047BA] rounded-xl"
+              className="h-10 border-[#C7C9C7]/50 focus:border-[#0047BA] focus:ring-[#0047BA] rounded-lg"
               required
             />
           </div>
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium text-slate-700">Urgency</Label>
-              <span className="text-sm font-semibold text-orange-600">
+              <Label className="text-sm font-medium text-gray-700">Urgency</Label>
+              <span className="text-sm font-medium text-orange-600">
                 {formData.urgency} - {urgencyLabels[formData.urgency - 1]}
               </span>
             </div>
@@ -166,8 +166,8 @@ export default function TaskDialog({ open, onClose, task, listId }) {
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium text-slate-700">Importance</Label>
-              <span className="text-sm font-semibold text-[#0047BA]">
+              <Label className="text-sm font-medium text-gray-700">Importance</Label>
+              <span className="text-sm font-medium text-[#0047BA]">
                 {formData.importance} - {importanceLabels[formData.importance - 1]}
               </span>
             </div>
@@ -181,20 +181,20 @@ export default function TaskDialog({ open, onClose, task, listId }) {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-slate-700">Deadline (Optional)</Label>
+            <Label className="text-sm font-medium text-gray-700">Deadline (Optional)</Label>
             <div className="flex flex-wrap gap-2">
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     type="button"
                     variant="outline"
-                    className="flex-1 justify-start text-left font-normal h-11 rounded-xl border-slate-200"
+                    className="flex-1 justify-start text-left font-normal h-10 rounded-lg border-[#C7C9C7]/50"
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4 text-slate-400" />
+                    <CalendarIcon className="mr-2 h-4 w-4 text-[#C7C9C7]" />
                     {formData.deadline ? format(formData.deadline, "PPP") : "Pick a date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 rounded-lg" align="start">
                   <Calendar
                     mode="single"
                     selected={formData.deadline}
@@ -213,21 +213,21 @@ export default function TaskDialog({ open, onClose, task, listId }) {
                       max="12"
                       value={time.hour}
                       onChange={(e) => setTime({ ...time, hour: e.target.value })}
-                      className="h-11 w-14 text-center rounded-xl border-slate-200"
+                      className="h-10 w-14 text-center rounded-lg border-[#C7C9C7]/50"
                     />
-                    <span className="text-slate-400">:</span>
+                    <span className="text-[#C7C9C7]">:</span>
                     <Input
                       type="number"
                       min="0"
                       max="59"
                       value={time.minute}
                       onChange={(e) => setTime({ ...time, minute: e.target.value.padStart(2, '0') })}
-                      className="h-11 w-14 text-center rounded-xl border-slate-200"
+                      className="h-10 w-14 text-center rounded-lg border-[#C7C9C7]/50"
                     />
                     <select
                       value={time.period}
                       onChange={(e) => setTime({ ...time, period: e.target.value })}
-                      className="h-11 px-2 rounded-xl border border-slate-200 bg-white text-sm"
+                      className="h-10 px-2 rounded-lg border border-[#C7C9C7]/50 bg-white text-sm"
                     >
                       <option value="AM">AM</option>
                       <option value="PM">PM</option>
@@ -238,7 +238,7 @@ export default function TaskDialog({ open, onClose, task, listId }) {
                     variant="ghost"
                     size="icon"
                     onClick={() => setFormData({ ...formData, deadline: null })}
-                    className="h-11 w-11 rounded-xl text-slate-400 hover:text-red-500"
+                    className="h-10 w-10 rounded-lg text-[#C7C9C7] hover:text-red-500"
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -248,13 +248,13 @@ export default function TaskDialog({ open, onClose, task, listId }) {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-slate-700">Repeat</Label>
+            <Label className="text-sm font-medium text-gray-700">Repeat</Label>
             <div className="flex items-center gap-2">
-              <Repeat className="w-4 h-4 text-slate-400" />
+              <Repeat className="w-4 h-4 text-[#C7C9C7]" />
               <select
                 value={formData.recurrence}
                 onChange={(e) => setFormData({ ...formData, recurrence: e.target.value })}
-                className="h-11 px-4 flex-1 rounded-xl border border-slate-200 bg-white text-sm"
+                className="h-10 px-4 flex-1 rounded-lg border border-[#C7C9C7]/50 bg-white text-sm"
               >
                 <option value="none">Does not repeat</option>
                 <option value="daily">Daily</option>
@@ -266,13 +266,13 @@ export default function TaskDialog({ open, onClose, task, listId }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes" className="text-sm font-medium text-slate-700">Notes (Optional)</Label>
+            <Label htmlFor="notes" className="text-sm font-medium text-gray-700">Notes (Optional)</Label>
             <Textarea
               id="notes"
               placeholder="Add any additional details..."
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              className="min-h-24 border-slate-200 focus:border-[#0047BA] focus:ring-[#0047BA] rounded-xl resize-none"
+              className="min-h-24 border-[#C7C9C7]/50 focus:border-[#0047BA] focus:ring-[#0047BA] rounded-lg resize-none"
             />
           </div>
 
@@ -285,12 +285,12 @@ export default function TaskDialog({ open, onClose, task, listId }) {
                   <Button
                     type="button"
                     variant="outline"
-                    className="rounded-xl border-red-200 text-red-600 hover:bg-red-50"
+                    className="rounded-lg border-red-200 text-red-500 hover:bg-red-50"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="rounded-2xl">
+                <AlertDialogContent className="rounded-lg">
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete Task</AlertDialogTitle>
                     <AlertDialogDescription>
@@ -298,10 +298,10 @@ export default function TaskDialog({ open, onClose, task, listId }) {
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+                    <AlertDialogCancel className="rounded-lg">Cancel</AlertDialogCancel>
                     <AlertDialogAction 
                       onClick={() => deleteMutation.mutate()}
-                      className="rounded-xl bg-red-600 hover:bg-red-700"
+                      className="rounded-lg bg-red-500 hover:bg-red-600"
                     >
                       Delete
                     </AlertDialogAction>
@@ -313,14 +313,14 @@ export default function TaskDialog({ open, onClose, task, listId }) {
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1 h-11 rounded-xl border-slate-200"
+              className="flex-1 h-10 rounded-lg border-[#C7C9C7]/50 text-gray-600"
               disabled={isLoading}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              className="flex-1 h-11 rounded-xl bg-[#0047BA] hover:bg-[#003A99]"
+              className="flex-1 h-10 rounded-lg bg-[#0047BA] hover:bg-[#003A99] text-white font-medium"
               disabled={isLoading || !formData.title.trim()}
             >
               {isLoading ? "Saving..." : isEditing ? "Update" : "Create"}

@@ -14,13 +14,13 @@ export default function CompletedTasksDialog({ open, onClose, tasks, onToggleCom
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto rounded-2xl">
+      <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto rounded-lg bg-white border-[#C7C9C7]/30">
         <DialogHeader>
-          <DialogTitle className="text-slate-700">Completed Tasks</DialogTitle>
+          <DialogTitle className="text-[#0047BA] font-semibold">Completed Tasks</DialogTitle>
         </DialogHeader>
 
         {completedTasks.length === 0 ? (
-          <p className="text-center text-slate-400 py-8">No completed tasks yet</p>
+          <p className="text-center text-[#C7C9C7] py-8">No completed tasks yet</p>
         ) : (
           <div className="space-y-2">
             <AnimatePresence>
@@ -30,17 +30,17 @@ export default function CompletedTasksDialog({ open, onClose, tasks, onToggleCom
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl"
+                  className="flex items-center gap-3 p-3 bg-[#C7C9C7]/10 rounded-lg"
                 >
                   <Checkbox
                     checked={true}
                     onCheckedChange={() => onToggleComplete(task)}
-                    className="h-5 w-5 rounded-full border-2 border-slate-300 data-[state=checked]:bg-[#0047BA] data-[state=checked]:border-[#0047BA]"
+                    className="h-5 w-5 rounded-full border-2 border-[#C7C9C7] data-[state=checked]:bg-[#0047BA] data-[state=checked]:border-[#0047BA]"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-slate-500 line-through truncate">{task.title}</p>
+                    <p className="text-[#C7C9C7] line-through truncate">{task.title}</p>
                     {task.completed_at && (
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-[#C7C9C7]/70">
                         Completed {format(new Date(task.completed_at), "MMM d, h:mm a")}
                       </p>
                     )}

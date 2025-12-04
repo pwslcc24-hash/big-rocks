@@ -224,7 +224,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+    <div className="min-h-screen bg-white">
       <div className="max-w-2xl mx-auto px-4 py-8 sm:py-12">
         {/* Header */}
         <motion.div 
@@ -233,11 +233,11 @@ export default function Home() {
           className="mb-8"
         >
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#0047BA]">Big Rocks</h1>
+            <h1 className="text-2xl sm:text-3xl font-semibold text-[#0047BA]">Big Rocks</h1>
             <div className="flex flex-col items-end gap-2">
               <Button 
                 onClick={() => setTaskDialogOpen(true)}
-                className="h-11 px-5 rounded-xl bg-[#0047BA] hover:bg-[#003A99] shadow-lg shadow-blue-900/25"
+                className="h-10 px-5 rounded-lg bg-[#0047BA] hover:bg-[#003A99] text-white font-medium shadow-sm"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 <span className="hidden sm:inline">Add Task</span>
@@ -246,7 +246,7 @@ export default function Home() {
               {completedTasks.length > 0 && (
                 <button 
                   onClick={() => setCompletedDialogOpen(true)}
-                  className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-600 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-sm text-[#C7C9C7] hover:text-[#0047BA] transition-colors"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   <span>Completed ({completedTasks.length})</span>
@@ -269,7 +269,7 @@ export default function Home() {
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-2xl p-5 border border-slate-100">
+              <div key={i} className="bg-white rounded-lg p-5 border border-[#C7C9C7]/30">
                 <div className="flex items-center gap-4">
                   <Skeleton className="h-5 w-5 rounded-full" />
                   <div className="flex-1">
@@ -287,7 +287,7 @@ export default function Home() {
             {/* Current Tasks */}
             {(incompleteTasks.length > 0 || recentlyCompletedTasks.length > 0) && (
               <div>
-                <h2 className="text-lg font-semibold text-slate-700 mb-3">Current Tasks</h2>
+                <h2 className="text-base font-medium text-[#0047BA] mb-3">Current Tasks</h2>
                 <div className="space-y-3">
                   <AnimatePresence mode="popLayout">
                     {incompleteTasks.map((task) => (
