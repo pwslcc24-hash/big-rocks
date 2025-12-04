@@ -12,16 +12,10 @@ import { Tag, Plus, Check } from "lucide-react";
 import TagBadge from "./TagBadge";
 
 const TAG_COLORS = [
-  "#3B82F6", // blue
-  "#10B981", // green
-  "#F59E0B", // amber
-  "#EF4444", // red
-  "#8B5CF6", // purple
-  "#EC4899", // pink
-  "#06B6D4", // cyan
-  "#F97316", // orange
-  "#6366F1", // indigo
-  "#14B8A6", // teal
+  // Row 1 - Vibrant
+  "#EF4444", "#F97316", "#F59E0B", "#EAB308", "#84CC16", "#22C55E", "#10B981", "#14B8A6", "#06B6D4", "#0EA5E9", "#3B82F6", "#6366F1", "#8B5CF6", "#A855F7", "#D946EF", "#EC4899",
+  // Row 2 - Muted/Pastel
+  "#FCA5A5", "#FDBA74", "#FCD34D", "#FDE047", "#BEF264", "#86EFAC", "#6EE7B7", "#5EEAD4", "#67E8F9", "#7DD3FC", "#93C5FD", "#A5B4FC", "#C4B5FD", "#D8B4FE", "#F0ABFC", "#F9A8D4",
 ];
 
 function getRandomColor(existingColors) {
@@ -143,13 +137,13 @@ export default function TagPicker({ selectedTagIds = [], onChange, userEmail }) 
                   className="h-8 text-sm rounded-md border-[#C7C9C7]/50"
                   autoFocus
                 />
-                <div className="flex flex-wrap gap-1.5">
+                <div className="grid grid-cols-8 gap-1.5">
                   {TAG_COLORS.map(color => (
                     <button
                       key={color}
                       type="button"
                       onClick={() => setSelectedColor(color)}
-                      className={`w-6 h-6 rounded-full transition-all ${
+                      className={`w-5 h-5 rounded-full transition-all ${
                         selectedColor === color ? 'ring-2 ring-offset-1 ring-[#0047BA]' : ''
                       }`}
                       style={{ backgroundColor: color }}
