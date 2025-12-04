@@ -48,9 +48,13 @@ export default function Home() {
         queryClient.invalidateQueries({ queryKey: ['taskLists'] });
       });
     } else if (!currentList && lists.length > 0) {
-      // Default to personal list or first available
-      const defaultList = lists.find(l => l.is_personal && l.owner_email === user.email) || lists[0];
-      setCurrentList(defaultList);
+      // Check for user's default list preference
+      const defaultListId = user.default_list_id;
+      const defaultList = defaultListId 
+        ? lists.find(l => l.id === defaultListId) 
+        : null;
+      // Fall back to personal list or first available
+      setCurrentList(defaultList || lists.find(l => l.is_personal && l.owner_email === user.email) || lists[0]);
     }
   }, [user?.email, lists, currentList, queryClient]);
 

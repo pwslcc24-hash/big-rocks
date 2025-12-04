@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from "@/utils";
-import { ArrowLeft, Trash2, UserPlus, X, Pencil, Check } from "lucide-react";
+import { ArrowLeft, Trash2, UserPlus, X, Pencil, Check, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
@@ -165,6 +165,29 @@ export default function ManageList() {
                   </Button>
                 </div>
               )}
+            </div>
+
+            {/* Set as default */}
+            <div className="mb-6 pb-6 border-b border-slate-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-700">Default List</h2>
+                  <p className="text-slate-500 text-sm">This list will open automatically when you log in.</p>
+                </div>
+                <Button
+                  variant={user?.default_list_id === listId ? "default" : "outline"}
+                  onClick={async () => {
+                    await base44.auth.updateMe({ 
+                      default_list_id: user?.default_list_id === listId ? null : listId 
+                    });
+                    queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+                  }}
+                  className={`rounded-xl ${user?.default_list_id === listId ? 'bg-[#0047BA] hover:bg-[#003A99]' : ''}`}
+                >
+                  <Star className={`w-4 h-4 mr-2 ${user?.default_list_id === listId ? 'fill-current' : ''}`} />
+                  {user?.default_list_id === listId ? 'Default' : 'Set as Default'}
+                </Button>
+              </div>
             </div>
 
             {/* Share with users */}
