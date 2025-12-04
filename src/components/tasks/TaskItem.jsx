@@ -1,7 +1,7 @@
 import React from 'react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, ChevronRight, Repeat, ListChecks } from "lucide-react";
+import { Calendar, ChevronRight, Repeat, ListChecks, Check } from "lucide-react";
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { format } from "date-fns";
@@ -43,11 +43,14 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
     >
       <div className="flex items-start gap-4">
         <div className="pt-0.5">
-          <Checkbox
-            checked={task.completed}
-            onCheckedChange={() => onToggleComplete(task)}
-            className="h-5 w-5 rounded-full border-2 border-white/50 data-[state=checked]:bg-white data-[state=checked]:border-white"
-          />
+          <button
+            onClick={() => onToggleComplete(task)}
+            className="h-5 w-5 rounded-full border-2 border-[#C7C9C7] flex items-center justify-center transition-all duration-200 hover:border-white"
+          >
+            {task.completed && (
+              <Check className="h-3.5 w-3.5 text-white animate-checkmark" />
+            )}
+          </button>
         </div>
         
         <button 
