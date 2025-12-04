@@ -72,9 +72,9 @@ export default function SubtaskList({ taskId }) {
   const completedCount = subtasks.filter(s => s.completed).length;
 
   return (
-    <div className="bg-slate-50 rounded-2xl p-4">
+    <div className="bg-[#C7C9C7]/10 rounded-lg p-4">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm font-medium text-slate-500">
+        <span className="text-sm font-medium text-gray-600">
           Subtasks {subtasks.length > 0 && `(${completedCount}/${subtasks.length})`}
         </span>
         {!isAdding && (
@@ -104,11 +104,11 @@ export default function SubtaskList({ taskId }) {
                     <div
                       ref={provided.innerRef}
                       {...provided.draggableProps}
-                      className={`flex items-center gap-3 group ${snapshot.isDragging ? "bg-white shadow-lg rounded-lg p-2 -ml-2" : ""}`}
+                      className={`flex items-center gap-3 group ${snapshot.isDragging ? "bg-white shadow-sm rounded-lg p-2 -ml-2" : ""}`}
                     >
                       <div
                         {...provided.dragHandleProps}
-                        className="cursor-grab active:cursor-grabbing text-slate-300 hover:text-slate-500 transition-colors"
+                        className="cursor-grab active:cursor-grabbing text-[#C7C9C7] hover:text-gray-500 transition-colors"
                       >
                         <GripVertical className="w-4 h-4" />
                       </div>
@@ -117,16 +117,16 @@ export default function SubtaskList({ taskId }) {
                         onCheckedChange={(checked) => 
                           updateMutation.mutate({ id: subtask.id, data: { completed: checked } })
                         }
-                        className="h-4 w-4 rounded border-slate-300 data-[state=checked]:bg-[#0047BA] data-[state=checked]:border-[#0047BA]"
+                        className="h-4 w-4 rounded border-[#C7C9C7] data-[state=checked]:bg-[#0047BA] data-[state=checked]:border-[#0047BA]"
                       />
-                      <span className={`flex-1 text-sm ${subtask.completed ? "line-through text-slate-400" : "text-slate-700"}`}>
+                      <span className={`flex-1 text-sm ${subtask.completed ? "line-through text-[#C7C9C7]" : "text-gray-700"}`}>
                         {subtask.title}
                       </span>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => deleteMutation.mutate(subtask.id)}
-                        className="h-6 w-6 opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-opacity"
+                        className="h-6 w-6 opacity-0 group-hover:opacity-100 text-[#C7C9C7] hover:text-red-500 transition-opacity"
                       >
                         <Trash2 className="w-3 h-3" />
                       </Button>
@@ -151,14 +151,14 @@ export default function SubtaskList({ taskId }) {
             value={newSubtask}
             onChange={(e) => setNewSubtask(e.target.value)}
             placeholder="Subtask title..."
-            className="h-9 text-sm rounded-lg border-slate-200"
+            className="h-9 text-sm rounded-lg border-[#C7C9C7]/50"
             autoFocus
           />
           <Button
             type="submit"
             size="sm"
             disabled={!newSubtask.trim() || createMutation.isPending}
-            className="h-9 px-3 rounded-lg bg-[#0047BA] hover:bg-[#003A99]"
+            className="h-9 px-3 rounded-lg bg-[#0047BA] hover:bg-[#003A99] text-white"
           >
             Add
           </Button>
@@ -167,7 +167,7 @@ export default function SubtaskList({ taskId }) {
             variant="ghost"
             size="icon"
             onClick={() => { setIsAdding(false); setNewSubtask(""); }}
-            className="h-9 w-9"
+            className="h-9 w-9 text-[#C7C9C7]"
           >
             <X className="w-4 h-4" />
           </Button>
@@ -175,7 +175,7 @@ export default function SubtaskList({ taskId }) {
       )}
 
       {subtasks.length === 0 && !isAdding && (
-        <p className="text-sm text-slate-400 text-center py-2">No subtasks yet</p>
+        <p className="text-sm text-[#C7C9C7] text-center py-2">No subtasks yet</p>
       )}
     </div>
   );
