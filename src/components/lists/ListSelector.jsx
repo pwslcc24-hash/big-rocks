@@ -82,19 +82,30 @@ export default function ListSelector({ currentList, onListChange, userEmail }) {
               <>
                 <div className="px-2 py-1.5 text-xs font-medium text-slate-500">My Lists</div>
                 {myLists.map(list => (
-                  <DropdownMenuItem 
-                    key={list.id} 
-                    onClick={() => onListChange(list)}
-                    className="cursor-pointer"
-                  >
-                    {list.is_personal ? (
-                      <User className="w-4 h-4 mr-2 text-slate-400" />
-                    ) : (
-                      <Users className="w-4 h-4 mr-2 text-[#0047BA]" />
-                    )}
-                    {list.name}
-                  </DropdownMenuItem>
-                ))}
+                        <DropdownMenuItem 
+                          key={list.id} 
+                          onClick={() => onListChange(list)}
+                          className="cursor-pointer flex items-center justify-between"
+                        >
+                          <div className="flex items-center">
+                            {list.is_personal ? (
+                              <User className="w-4 h-4 mr-2 text-slate-400" />
+                            ) : (
+                              <Users className="w-4 h-4 mr-2 text-[#0047BA]" />
+                            )}
+                            {list.name}
+                          </div>
+                          {!list.is_personal && (
+                            <Link 
+                              to={createPageUrl(`ManageList?id=${list.id}`)}
+                              onClick={(e) => e.stopPropagation()}
+                              className="ml-2 p-1 hover:bg-slate-100 rounded"
+                            >
+                              <Settings className="w-3.5 h-3.5 text-slate-400 hover:text-[#0047BA]" />
+                            </Link>
+                          )}
+                        </DropdownMenuItem>
+                      ))}
               </>
             )}
             {sharedWithMe.length > 0 && (
@@ -118,14 +129,6 @@ export default function ListSelector({ currentList, onListChange, userEmail }) {
               <Plus className="w-4 h-4 mr-2" />
               Create New List
             </DropdownMenuItem>
-            {currentList && !currentList.is_personal && currentList.owner_email === userEmail && (
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link to={createPageUrl(`ManageList?id=${currentList.id}`)}>
-                  <Settings className="w-4 h-4 mr-2" />
-                  Manage List
-                </Link>
-              </DropdownMenuItem>
-            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -45,7 +45,10 @@ export default function ManageList() {
 
   const updateMutation = useMutation({
     mutationFn: (data) => base44.entities.TaskList.update(listId, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['taskList', listId] })
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['taskList', listId] });
+      queryClient.invalidateQueries({ queryKey: ['taskLists'] });
+    }
   });
 
   const deleteMutation = useMutation({
