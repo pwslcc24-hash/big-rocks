@@ -60,6 +60,16 @@ export default function Home() {
     enabled: !!currentList?.id
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Task.update(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] })
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data) => base44.entities.Task.create(data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] })
+  });
+
   // Auto-escalate urgency based on deadline proximity
   useEffect(() => {
     if (!tasks.length) return;
@@ -85,16 +95,6 @@ export default function Home() {
       }
     });
   }, [tasks]);
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Task.update(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] })
-  });
-
-  const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Task.create(data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] })
-  });
 
   // Generate next recurring task instance
   const generateNextRecurrence = (task) => {
