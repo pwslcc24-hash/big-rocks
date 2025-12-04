@@ -8,19 +8,19 @@ import { format } from "date-fns";
 import { motion } from "framer-motion";
 
 const urgencyColors = {
-  1: "bg-[#C7C9C7]/20 text-[#C7C9C7]",
-  2: "bg-[#C7C9C7]/30 text-gray-600",
-  3: "bg-amber-50 text-amber-600",
-  4: "bg-orange-50 text-orange-600",
-  5: "bg-red-50 text-red-600"
+  1: "bg-white/20 text-white/70",
+  2: "bg-white/25 text-white/80",
+  3: "bg-amber-400/90 text-white",
+  4: "bg-orange-400/90 text-white",
+  5: "bg-red-400/90 text-white"
 };
 
 const importanceColors = {
-  1: "bg-[#C7C9C7]/20 text-[#C7C9C7]",
-  2: "bg-[#0047BA]/10 text-[#0047BA]/60",
-  3: "bg-[#0047BA]/15 text-[#0047BA]/80",
-  4: "bg-[#0047BA]/25 text-[#0047BA]",
-  5: "bg-[#0047BA] text-white"
+  1: "bg-white/20 text-white/70",
+  2: "bg-white/25 text-white/80",
+  3: "bg-white/30 text-white",
+  4: "bg-white/40 text-white",
+  5: "bg-white text-[#0047BA]"
 };
 
 export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
@@ -37,7 +37,7 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -20 }}
       layout
-      className={`group relative bg-white rounded-lg border border-[#C7C9C7]/30 p-4 sm:p-5 hover:border-[#0047BA]/30 hover:shadow-sm transition-all duration-200 ${
+      className={`group relative bg-[#0047BA] rounded-lg p-4 sm:p-5 hover:bg-[#003A99] transition-all duration-200 ${
         task.completed ? "opacity-50" : ""
       }`}
     >
@@ -46,7 +46,7 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
           <Checkbox
             checked={task.completed}
             onCheckedChange={() => onToggleComplete(task)}
-            className="h-5 w-5 rounded-full border-2 border-[#C7C9C7] data-[state=checked]:bg-[#0047BA] data-[state=checked]:border-[#0047BA]"
+            className="h-5 w-5 rounded-full border-2 border-white/50 data-[state=checked]:bg-white data-[state=checked]:border-white"
           />
         </div>
         
@@ -56,8 +56,8 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <h3 className={`text-base sm:text-lg font-medium text-gray-800 truncate ${
-                task.completed ? "line-through text-[#C7C9C7]" : ""
+              <h3 className={`text-base sm:text-lg font-medium text-white truncate ${
+                task.completed ? "line-through text-white/50" : ""
               }`}>
                 {task.title}
               </h3>
@@ -71,21 +71,21 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
                 </Badge>
                 
                 {task.deadline && (
-                    <span className="flex items-center gap-1 text-xs text-[#C7C9C7]">
+                    <span className="flex items-center gap-1 text-xs text-white/70">
                       <Calendar className="w-3 h-3" />
                       {format(new Date(task.deadline), "MMM d, h:mm a")}
                     </span>
                   )}
 
                   {task.recurrence && task.recurrence !== "none" && (
-                    <span className="flex items-center gap-1 text-xs text-[#0047BA]">
+                    <span className="flex items-center gap-1 text-xs text-white/70">
                       <Repeat className="w-3 h-3" />
                       {task.recurrence}
                     </span>
                   )}
 
                   {subtasks.length > 0 && (
-                    <span className="flex items-center gap-1 text-xs text-[#C7C9C7]">
+                    <span className="flex items-center gap-1 text-xs text-white/70">
                       <ListChecks className="w-3 h-3" />
                       {completedSubtasks}/{subtasks.length}
                     </span>
@@ -93,7 +93,7 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
               </div>
             </div>
             
-            <ChevronRight className="w-5 h-5 text-[#C7C9C7] group-hover:text-[#0047BA] transition-colors flex-shrink-0" />
+            <ChevronRight className="w-5 h-5 text-white/50 group-hover:text-white transition-colors flex-shrink-0" />
           </div>
           </button>
       </div>
