@@ -56,10 +56,18 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <h3 className={`text-base sm:text-lg font-medium text-white truncate ${
-                task.completed ? "line-through text-white/50" : ""
+              <h3 className={`text-base sm:text-lg font-medium text-white truncate relative ${
+                task.completed ? "text-white/70" : ""
               }`}>
-                {task.title}
+                <span className="relative">
+                  {task.title}
+                  {task.completed && (
+                    <span 
+                      className="absolute left-0 top-1/2 h-[2px] bg-[#C7C9C7] origin-left animate-strikethrough"
+                      style={{ width: '100%' }}
+                    />
+                  )}
+                </span>
               </h3>
               
               <div className="flex flex-wrap items-center gap-2 mt-2">
