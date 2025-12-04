@@ -6,6 +6,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { format } from "date-fns";
 import { motion } from "framer-motion";
+import TagBadge from "../tags/TagBadge";
 
 const urgencyColors = {
   1: "bg-white/20 text-white/70",
@@ -23,11 +24,13 @@ const importanceColors = {
   5: "bg-white text-[#0047BA]"
 };
 
-export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
+export default function TaskItem({ task, onToggleComplete, onOpenTask, tags = [] }) {
   const { data: subtasks = [] } = useQuery({
     queryKey: ['subtasks', task.id],
     queryFn: () => base44.entities.Subtask.filter({ task_id: task.id })
   });
+
+  const taskTags = tags.filter(t => task.tag_ids?.includes(t.id));
 
   const completedSubtasks = subtasks.filter(s => s.completed).length;
 
@@ -96,12 +99,19 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
                   )}
 
                   {subtasks.length > 0 && (
-                    <span className="flex items-center gap-1 text-xs text-white/70">
-                      <ListChecks className="w-3 h-3" />
-                      {completedSubtasks}/{subtasks.length}
-                    </span>
-                  )}
-              </div>
+                                        <span className="flex items-center gap-1 text-xs text-white/70">
+                                          <ListChecks className="w-3 h-3" />
+                                          {completedSubtasks}/{subtasks.length}
+                                        </span>
+                                      )}
+                                  </div>
+                                  {taskTags.length > 0 && (
+                                    <div className="flex flex-wrap gap-1 mt-2">
+                                      {taskTags.map(tag => (
+                                        <TagBadge key={tag.id} tag={tag} size="sm" />
+                                      ))}
+                                    </div>
+                                  )}
             </div>
             
             <ChevronRight className="w-5 h-5 text-white/50 group-hover:text-white transition-colors flex-shrink-0" />
