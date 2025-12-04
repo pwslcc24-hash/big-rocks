@@ -24,16 +24,6 @@ const importanceColors = {
   5: "bg-white text-[#0047BA]"
 };
 
-// Determine if text should be white or black based on background color
-function getContrastColor(hexColor) {
-  const hex = hexColor.replace('#', '');
-  const r = parseInt(hex.substr(0, 2), 16);
-  const g = parseInt(hex.substr(2, 2), 16);
-  const b = parseInt(hex.substr(4, 2), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.5 ? 'dark' : 'light';
-}
-
 export default function TaskItem({ task, onToggleComplete, onOpenTask, tags = [] }) {
   const { data: subtasks = [] } = useQuery({
     queryKey: ['subtasks', task.id],
@@ -41,9 +31,6 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask, tags = []
   });
 
   const taskTags = tags.filter(t => task.tag_ids?.includes(t.id));
-  const primaryTag = taskTags[0];
-  const bgColor = primaryTag?.color || '#0047BA';
-  const textMode = getContrastColor(bgColor);
 
   const completedSubtasks = subtasks.filter(s => s.completed).length;
 
@@ -53,29 +40,21 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask, tags = []
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -20 }}
       layout
-      className={`group relative rounded-lg p-4 sm:p-5 transition-all duration-200 ${
+      className={`group relative bg-[#0047BA] rounded-lg p-4 sm:p-5 hover:bg-[#003A99] transition-all duration-200 ${
         task.completed ? "opacity-50" : ""
       }`}
-      style={{ 
-        backgroundColor: bgColor,
-        filter: task.completed ? undefined : 'brightness(1)',
-      }}
-      onMouseEnter={(e) => e.currentTarget.style.filter = 'brightness(0.9)'}
-      onMouseLeave={(e) => e.currentTarget.style.filter = 'brightness(1)'}
     >
       <div className="flex items-start gap-4">
         <div className="pt-0.5">
-                      <button
-                        onClick={() => onToggleComplete(task)}
-                        className={`h-5 w-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                          textMode === 'light' ? 'border-white' : 'border-gray-800'
-                        }`}
-                      >
-                        {task.completed && (
-                          <Check className={`h-3.5 w-3.5 animate-checkmark ${textMode === 'light' ? 'text-white' : 'text-gray-800'}`} strokeWidth={3} />
-                        )}
-                      </button>
-                    </div>
+          <button
+            onClick={() => onToggleComplete(task)}
+            className="h-5 w-5 rounded-full border-2 border-white flex items-center justify-center transition-all duration-200"
+          >
+            {task.completed && (
+              <Check className="h-3.5 w-3.5 text-white animate-checkmark" strokeWidth={3} />
+            )}
+          </button>
+        </div>
         
         <button 
           onClick={() => onOpenTask?.(task)}
@@ -83,23 +62,19 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask, tags = []
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <h3 className={`text-base sm:text-lg font-medium truncate relative ${
-                                    textMode === 'light' 
-                                      ? (task.completed ? "text-white/70" : "text-white")
-                                      : (task.completed ? "text-gray-800/70" : "text-gray-800")
-                                  }`}>
-                                    <span className="relative">
-                                      {task.title}
-                                      {task.completed && (
-                                        <span 
-                                          className={`absolute left-0 top-1/2 h-[2px] origin-left animate-strikethrough ${
-                                            textMode === 'light' ? 'bg-white/50' : 'bg-gray-800/50'
-                                          }`}
-                                          style={{ width: '100%' }}
-                                        />
-                                      )}
-                                    </span>
-                                  </h3>
+              <h3 className={`text-base sm:text-lg font-medium text-white truncate relative ${
+                task.completed ? "text-white/70" : ""
+              }`}>
+                <span className="relative">
+                  {task.title}
+                  {task.completed && (
+                    <span 
+                      className="absolute left-0 top-1/2 h-[2px] bg-[#C7C9C7] origin-left animate-strikethrough"
+                      style={{ width: '100%' }}
+                    />
+                  )}
+                </span>
+              </h3>
               
               <div className="flex flex-wrap items-center gap-2 mt-2">
                 <Badge className={`${urgencyColors[task.urgency]} border-0 text-xs font-medium rounded-md`}>
@@ -110,38 +85,36 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask, tags = []
                 </Badge>
                 
                 {task.deadline && (
-                                          <span className={`flex items-center gap-1 text-xs ${textMode === 'light' ? 'text-white/70' : 'text-gray-800/70'}`}>
-                                            <Calendar className="w-3 h-3" />
-                                            {format(new Date(task.deadline), "MMM d, h:mm a")}
-                                          </span>
-                                        )}
+                    <span className="flex items-center gap-1 text-xs text-white/70">
+                      <Calendar className="w-3 h-3" />
+                      {format(new Date(task.deadline), "MMM d, h:mm a")}
+                    </span>
+                  )}
 
-                                        {task.recurrence && task.recurrence !== "none" && (
-                                          <span className={`flex items-center gap-1 text-xs ${textMode === 'light' ? 'text-white/70' : 'text-gray-800/70'}`}>
-                                            <Repeat className="w-3 h-3" />
-                                            {task.recurrence}
-                                          </span>
-                                        )}
+                  {task.recurrence && task.recurrence !== "none" && (
+                    <span className="flex items-center gap-1 text-xs text-white/70">
+                      <Repeat className="w-3 h-3" />
+                      {task.recurrence}
+                    </span>
+                  )}
 
-                                        {subtasks.length > 0 && (
-                                          <span className={`flex items-center gap-1 text-xs ${textMode === 'light' ? 'text-white/70' : 'text-gray-800/70'}`}>
-                                            <ListChecks className="w-3 h-3" />
-                                            {completedSubtasks}/{subtasks.length}
-                                          </span>
-                                        )}
+                  {subtasks.length > 0 && (
+                                        <span className="flex items-center gap-1 text-xs text-white/70">
+                                          <ListChecks className="w-3 h-3" />
+                                          {completedSubtasks}/{subtasks.length}
+                                        </span>
+                                      )}
                                   </div>
-                                  {taskTags.length > 1 && (
-                                                    <div className="flex flex-wrap gap-1 mt-2">
-                                                      {taskTags.slice(1).map(tag => (
-                                                        <TagBadge key={tag.id} tag={tag} size="sm" />
-                                                      ))}
-                                                    </div>
-                                                  )}
+                                  {taskTags.length > 0 && (
+                                    <div className="flex flex-wrap gap-1 mt-2">
+                                      {taskTags.map(tag => (
+                                        <TagBadge key={tag.id} tag={tag} size="sm" />
+                                      ))}
+                                    </div>
+                                  )}
             </div>
             
-            <ChevronRight className={`w-5 h-5 transition-colors flex-shrink-0 ${
-                    textMode === 'light' ? 'text-white/50 group-hover:text-white' : 'text-gray-800/50 group-hover:text-gray-800'
-                  }`} />
+            <ChevronRight className="w-5 h-5 text-white/50 group-hover:text-white transition-colors flex-shrink-0" />
           </div>
           </button>
       </div>
