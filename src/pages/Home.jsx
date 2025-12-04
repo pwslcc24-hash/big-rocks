@@ -312,6 +312,20 @@ export default function Home() {
             )}
           </div>
         )}
+
+        <TaskDialog
+          open={taskDialogOpen}
+          onClose={handleCloseTaskDialog}
+          task={editingTask}
+          listId={currentList?.id}
+        />
+
+        <CompletedTasksDialog
+          open={completedDialogOpen}
+          onClose={() => setCompletedDialogOpen(false)}
+          tasks={tasks}
+          onToggleComplete={handleToggleComplete}
+        />
       </div>
     </div>
   );
