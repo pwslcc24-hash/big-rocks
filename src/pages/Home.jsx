@@ -33,30 +33,20 @@ export default function Home() {
     enabled: !!user?.email
   });
 
-  // Create personal list if it doesn't exist
+  // Set current list based on user preference
   useEffect(() => {
-    if (!user?.email || lists === undefined) return;
+    if (!user?.email || lists === undefined || lists.length === 0) return;
     
-    const personalList = lists.find(l => l.is_personal && l.owner_email === user.email);
-    if (!personalList && lists.length === 0) {
-      base44.entities.TaskList.create({
-        name: "My Tasks",
-        owner_email: user.email,
-        shared_with: [],
-        is_personal: true
-      }).then(() => {
-        queryClient.invalidateQueries({ queryKey: ['taskLists'] });
-      });
-    } else if (!currentList && lists.length > 0) {
+    if (!currentList) {
       // Check for user's default list preference
       const defaultListId = user.default_list_id;
       const defaultList = defaultListId 
         ? lists.find(l => l.id === defaultListId) 
         : null;
-      // Fall back to personal list or first available
-      setCurrentList(defaultList || lists.find(l => l.is_personal && l.owner_email === user.email) || lists[0]);
+      // Fall back to first available list
+      setCurrentList(defaultList || lists[0]);
     }
-  }, [user?.email, lists, currentList, queryClient]);
+  }, [user?.email, lists, currentList]);
 
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ['tasks', currentList?.id],
