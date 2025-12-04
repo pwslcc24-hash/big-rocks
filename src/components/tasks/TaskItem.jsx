@@ -45,7 +45,7 @@ export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
         <div className="pt-0.5">
           <button
             onClick={() => onToggleComplete(task)}
-            className="h-5 w-5 rounded-full border-2 border-[#C7C9C7] flex items-center justify-center transition-all duration-200 hover:border-white"
+            className="h-5 w-5 rounded-full border-2 border-white flex items-center justify-center transition-all duration-200"
           >
             {task.completed && (
               <Check className="h-3.5 w-3.5 text-white animate-checkmark" strokeWidth={3} />
