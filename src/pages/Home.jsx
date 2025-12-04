@@ -281,7 +281,7 @@ export default function Home() {
             ))}
           </div>
         ) : tasks.length === 0 ? (
-          <EmptyState />
+          <EmptyState onAddTask={() => setTaskDialogOpen(true)} />
         ) : (
           <div className="space-y-6">
             {/* Current Tasks */}

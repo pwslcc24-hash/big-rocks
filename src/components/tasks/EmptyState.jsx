@@ -1,8 +1,6 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Plus } from "lucide-react";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
 
 export default function EmptyState({ onAddTask }) {
