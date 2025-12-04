@@ -2,18 +2,21 @@ import React, { useMemo, useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
-import { Plus, CheckCircle2, ChevronRight, Repeat } from "lucide-react";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { Plus, CheckCircle2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import TaskItem from "@/components/tasks/TaskItem";
 import EmptyState from "@/components/tasks/EmptyState";
 import ListSelector from "@/components/lists/ListSelector";
+import TaskDialog from "@/components/tasks/TaskDialog";
+import CompletedTasksDialog from "@/components/tasks/CompletedTasksDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
   const queryClient = useQueryClient();
   const [currentList, setCurrentList] = useState(null);
+  const [taskDialogOpen, setTaskDialogOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
+  const [completedDialogOpen, setCompletedDialogOpen] = useState(false);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -205,13 +208,20 @@ export default function Home() {
     }
   }, [tasks, queryClient]);
 
-  // Tasks that are recently completed (within 5 minutes) stay visible
+  // Tasks that are recently completed (within 5 minutes) stay in current tasks section
   const recentlyCompletedTasks = completedTasks.filter(t => 
     t.completed_at && (new Date() - new Date(t.completed_at)) < 5 * 60 * 1000
   );
 
-  // Count of tasks moved to completed page
-  const archivedCompletedCount = completedTasks.length - recentlyCompletedTasks.length;
+  const handleOpenTask = (task) => {
+    setEditingTask(task);
+    setTaskDialogOpen(true);
+  };
+
+  const handleCloseTaskDialog = () => {
+    setTaskDialogOpen(false);
+    setEditingTask(null);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
@@ -225,19 +235,22 @@ export default function Home() {
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl sm:text-3xl font-bold text-[#0047BA]">Big Rocks</h1>
             <div className="flex flex-col items-end gap-2">
-              <Link to={createPageUrl(`AddTask?list=${currentList?.id}`)}>
-                <Button className="h-11 px-5 rounded-xl bg-[#0047BA] hover:bg-[#003A99] shadow-lg shadow-blue-900/25">
-                  <Plus className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">Add Task</span>
-                  <span className="sm:hidden">Add</span>
-                </Button>
-              </Link>
+              <Button 
+                onClick={() => setTaskDialogOpen(true)}
+                className="h-11 px-5 rounded-xl bg-[#0047BA] hover:bg-[#003A99] shadow-lg shadow-blue-900/25"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Add Task</span>
+                <span className="sm:hidden">Add</span>
+              </Button>
               {completedTasks.length > 0 && (
-                <Link to={createPageUrl(`CompletedTasks?list=${currentList?.id}`)} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0047BA] transition-colors">
+                <button 
+                  onClick={() => setCompletedDialogOpen(true)}
+                  className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-600 transition-colors"
+                >
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Completed</span>
-                  <ChevronRight className="w-3 h-3" />
-                </Link>
+                  <span>Completed ({completedTasks.length})</span>
+                </button>
               )}
             </div>
           </div>
@@ -278,19 +291,21 @@ export default function Home() {
                 <div className="space-y-3">
                   <AnimatePresence mode="popLayout">
                     {incompleteTasks.map((task) => (
-                      <TaskItem
-                        key={task.id}
-                        task={task}
-                        onToggleComplete={handleToggleComplete}
-                      />
-                    ))}
-                    {recentlyCompletedTasks.map((task) => (
-                      <TaskItem
-                        key={task.id}
-                        task={task}
-                        onToggleComplete={handleToggleComplete}
-                      />
-                    ))}
+                        <TaskItem
+                          key={task.id}
+                          task={task}
+                          onToggleComplete={handleToggleComplete}
+                          onOpenTask={handleOpenTask}
+                        />
+                      ))}
+                      {recentlyCompletedTasks.map((task) => (
+                        <TaskItem
+                          key={task.id}
+                          task={task}
+                          onToggleComplete={handleToggleComplete}
+                          onOpenTask={handleOpenTask}
+                        />
+                      ))}
                   </AnimatePresence>
                 </div>
               </div>

@@ -18,13 +18,18 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { ChevronDown, Plus, Users, User, Settings } from "lucide-react";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import ManageListDialog from "./ManageListDialog";
 
 export default function ListSelector({ currentList, onListChange, userEmail }) {
   const [showNewListDialog, setShowNewListDialog] = useState(false);
   const [newListName, setNewListName] = useState("");
+  const [manageListDialog, setManageListDialog] = useState(null);
   const queryClient = useQueryClient();
+
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
 
   const { data: lists = [] } = useQuery({
     queryKey: ['taskLists', userEmail],
@@ -95,13 +100,15 @@ export default function ListSelector({ currentList, onListChange, userEmail }) {
                             )}
                             {list.name}
                           </div>
-                          <Link 
-                            to={createPageUrl(`ManageList?id=${list.id}`)}
-                            onClick={(e) => e.stopPropagation()}
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setManageListDialog(list);
+                            }}
                             className="ml-2 p-1 hover:bg-slate-100 rounded"
                           >
                             <Settings className="w-3.5 h-3.5 text-slate-400 hover:text-[#0047BA]" />
-                          </Link>
+                          </button>
                         </DropdownMenuItem>
                       ))}
               </>
@@ -156,6 +163,13 @@ export default function ListSelector({ currentList, onListChange, userEmail }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ManageListDialog
+        open={!!manageListDialog}
+        onClose={() => setManageListDialog(null)}
+        list={manageListDialog}
+        user={user}
+      />
     </>
   );
 }

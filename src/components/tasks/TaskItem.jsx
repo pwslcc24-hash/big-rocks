@@ -5,8 +5,6 @@ import { Calendar, ChevronRight, Repeat, ListChecks } from "lucide-react";
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { format } from "date-fns";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
 
 const urgencyColors = {
@@ -25,7 +23,7 @@ const importanceColors = {
   5: "bg-[#0047BA] text-white"
 };
 
-export default function TaskItem({ task, onToggleComplete }) {
+export default function TaskItem({ task, onToggleComplete, onOpenTask }) {
   const { data: subtasks = [] } = useQuery({
     queryKey: ['subtasks', task.id],
     queryFn: () => base44.entities.Subtask.filter({ task_id: task.id })
@@ -52,9 +50,9 @@ export default function TaskItem({ task, onToggleComplete }) {
           />
         </div>
         
-        <Link 
-          to={createPageUrl(`TaskDetail?id=${task.id}`)}
-          className="flex-1 min-w-0"
+        <button 
+          onClick={() => onOpenTask?.(task)}
+          className="flex-1 min-w-0 text-left"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
@@ -97,7 +95,7 @@ export default function TaskItem({ task, onToggleComplete }) {
             
             <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-slate-500 transition-colors flex-shrink-0" />
           </div>
-        </Link>
+          </button>
       </div>
     </motion.div>
   );
