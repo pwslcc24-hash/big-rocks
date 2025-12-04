@@ -57,6 +57,15 @@ export default function Home() {
     enabled: !!currentList?.id
   });
 
+  const { data: tags = [] } = useQuery({
+    queryKey: ['tags', user?.email],
+    queryFn: async () => {
+      const allTags = await base44.entities.Tag.list();
+      return allTags.filter(tag => tag.owner_email === user.email);
+    },
+    enabled: !!user?.email
+  });
+
   // Auto-escalate urgency based on deadline proximity
   useEffect(() => {
     if (!tasks.length) return;
@@ -296,6 +305,7 @@ export default function Home() {
                           task={task}
                           onToggleComplete={handleToggleComplete}
                           onOpenTask={handleOpenTask}
+                          tags={tags}
                         />
                       ))}
                       {recentlyCompletedTasks.map((task) => (
@@ -304,6 +314,7 @@ export default function Home() {
                           task={task}
                           onToggleComplete={handleToggleComplete}
                           onOpenTask={handleOpenTask}
+                          tags={tags}
                         />
                       ))}
                   </AnimatePresence>
@@ -318,6 +329,7 @@ export default function Home() {
           onClose={handleCloseTaskDialog}
           task={editingTask}
           listId={currentList?.id}
+          userEmail={user?.email}
         />
 
         <CompletedTasksDialog
@@ -325,6 +337,7 @@ export default function Home() {
           onClose={() => setCompletedDialogOpen(false)}
           tasks={tasks}
           onToggleComplete={handleToggleComplete}
+          tags={tags}
         />
       </div>
     </div>
