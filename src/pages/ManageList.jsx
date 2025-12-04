@@ -3,11 +3,10 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from "@/utils";
-import { ArrowLeft, Trash2, UserPlus, X } from "lucide-react";
+import { ArrowLeft, Trash2, UserPlus, X, Pencil, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import {
   AlertDialog,
@@ -27,6 +26,8 @@ export default function ManageList() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [newEmail, setNewEmail] = useState("");
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState("");
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
